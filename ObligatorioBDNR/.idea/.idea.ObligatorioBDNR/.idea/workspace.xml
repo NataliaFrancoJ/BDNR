@@ -5,8 +5,29 @@
     <projectFile profileName="http">ObligatorioBDNR/ObligatorioBDNR.csproj</projectFile>
     <projectFile profileName="https">ObligatorioBDNR/ObligatorioBDNR.csproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7e06b98-c378-4071-9aa5-b037b5043f36" name="Changes" comment="" />
+    <list default="true" id="c7e06b98-c378-4071-9aa5-b037b5043f36" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Domain/ActividadUsuario.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Domain/LogroDefinicion.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObligatorioBDNR/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObligatorioBDNR/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObligatorioBDNR/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObligatorioBDNR/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR.sln" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/ObligatorioBDNR.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/ObligatorioBDNR.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/ObligatorioBDNR.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/ObligatorioBDNR.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/ObligatorioBDNR.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/ObligatorioBDNR.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.packagespec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.restore.info" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,38 +36,45 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "NataliaFrancoJ"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;NataliaFrancoJ&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/NataliaFrancoJ/BDNR.git",
-    "accountId": "19be002c-99a7-4028-9453-7c2760d1f7e2"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/NataliaFrancoJ/BDNR.git&quot;,
+    &quot;accountId&quot;: &quot;19be002c-99a7-4028-9453-7c2760d1f7e2&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="36IKNEnAxb0UzqZB9M7YkiJ2Lyr" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "CrearSolucion",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;MongoDB&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\Usuario\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\Usuario\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\Usuario\\AppData\\Local\\Symbols\\src&quot;
+    ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.ObligatorioBDNR: IIS Express">
     <configuration name="ObligatorioBDNR: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ObligatorioBDNR/ObligatorioBDNR.csproj" />
@@ -103,6 +131,7 @@
       <option name="presentableId" value="Default" />
       <updated>1764688605624</updated>
       <workItem from="1764688607400" duration="547000" />
+      <workItem from="1764690434590" duration="6475000" />
     </task>
     <servers />
   </component>
