@@ -28,6 +28,18 @@ public class Program
 
         // Registrar servicios opcionales
         builder.Services.AddScoped<ObligatorioBDNR.Services.SeedService>();
+        builder.Services.AddScoped<ObligatorioBDNR.Services.AuthService>();
+        builder.Services.AddHttpContextAccessor();
+
+        // Configurar sesiones
+        builder.Services.AddDistributedMemoryCache();
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+            options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+        });
 
         // Configurar Blazor Server
         builder.Services.AddRazorPages();
@@ -46,6 +58,9 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
+        
+        // Usar sesiones
+        app.UseSession();
 
         app.MapBlazorHub();
         app.MapFallbackToPage("/_Host");

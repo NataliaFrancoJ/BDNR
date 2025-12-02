@@ -81,15 +81,17 @@ public class SeedService
         }
 
         // Crear usuarios de ejemplo
+        // Usuario 1: Juan Pérez
         var usuario1 = new Usuario
         {
             Id = Guid.NewGuid(),
-            Email = "usuario1@duolingo.com",
-            Username = "usuario1",
+            Email = "juan.perez@duolingo.com",
+            Username = "JuanPerez",
             FotoPerfil = "",
             FechaCreacion = DateTime.UtcNow.AddDays(-30),
             Autenticacion = new Autenticacion
             {
+                // Contraseña: password123
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123"),
                 Tiene2FA = false,
                 Metodo2FA = ""
@@ -142,15 +144,17 @@ public class SeedService
             }
         };
 
+        // Usuario 2: María García
         var usuario2 = new Usuario
         {
             Id = Guid.NewGuid(),
-            Email = "usuario2@duolingo.com",
-            Username = "usuario2",
+            Email = "maria.garcia@duolingo.com",
+            Username = "MariaGarcia",
             FotoPerfil = "",
             FechaCreacion = DateTime.UtcNow.AddDays(-15),
             Autenticacion = new Autenticacion
             {
+                // Contraseña: password123
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123"),
                 Tiene2FA = true,
                 Metodo2FA = "App"

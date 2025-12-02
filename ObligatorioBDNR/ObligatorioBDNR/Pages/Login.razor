@@ -1,0 +1,104 @@
+@page "/login"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Iniciar Sesión - Duolingo</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center mb-0">Iniciar Sesión</h3>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@loginModel" OnValidSubmit="@LoginAsync">
+                        <DataAnnotationsValidator />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <InputText @bind-Value="loginModel.Email" class="form-control" type="email" />
+                            <ValidationMessage For="@(() => loginModel.Email)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <InputText @bind-Value="loginModel.Password" class="form-control" type="password" />
+                            <ValidationMessage For="@(() => loginModel.Password)" />
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(mensajeError))
+                        {
+                            <div class="alert alert-danger">@mensajeError</div>
+                        }
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" disabled="@cargando">
+                                @(cargando ? "Iniciando sesión..." : "Iniciar Sesión")
+                            </button>
+                        </div>
+                    </EditForm>
+
+                    <div class="mt-3 text-center">
+                        <p>¿No tienes una cuenta? <a href="/registro">Regístrate aquí</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private string mensajeError = string.Empty;
+    private bool cargando = false;
+
+    protected override void OnInitialized()
+    {
+        // Si ya está autenticado, redirigir al dashboard
+        if (AuthService.EstaAutenticado())
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private async Task LoginAsync()
+    {
+        cargando = true;
+        mensajeError = string.Empty;
+
+        try
+        {
+            var (exito, mensaje, usuario) = await AuthService.LoginAsync(loginModel.Email, loginModel.Password);
+
+            if (exito && usuario != null)
+            {
+                // Redirigir a una página intermedia que establecerá la autenticación
+                // Esto funciona porque es una Razor Page, no Blazor
+                await JSRuntime.InvokeVoidAsync("eval", $"window.location.href = '/auth/set?userId={usuario.Id}&returnUrl=/'");
+            }
+            else
+            {
+                mensajeError = mensaje;
+                cargando = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al iniciar sesión: {ex.Message}";
+            cargando = false;
+        }
+    }
+
+    private class LoginModel
+    {
+        [Required(ErrorMessage = "El email es requerido")]
+        [EmailAddress(ErrorMessage = "El email no es válido")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La contraseña es requerida")]
+        public string Password { get; set; } = string.Empty;
+    }
+}
+

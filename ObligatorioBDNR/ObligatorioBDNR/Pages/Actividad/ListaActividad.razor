@@ -1,21 +1,29 @@
-@page "/actividad/{IdUsuario:guid}"
+@page "/actividad"
+@inject AuthService AuthService
 @inject ActividadUsuarioRepository ActividadRepository
 @inject UsuarioRepository UsuarioRepository
+@inject NavigationManager Navigation
 
-<PageTitle>Actividad del Usuario - Duolingo</PageTitle>
+<PageTitle>Mi Actividad - Duolingo</PageTitle>
 
-<h1>Actividad del Usuario</h1>
-
-@if (usuario == null)
+@if (!AuthService.EstaAutenticado())
+{
+    <div class="alert alert-warning">
+        Debes iniciar sesión para ver tu actividad. <a href="/login">Iniciar Sesión</a>
+    </div>
+}
+else if (usuario == null)
 {
     <p><em>Cargando...</em></p>
 }
 else
 {
+    <h1>Mi Actividad</h1>
+
     <div class="mb-3">
         <p><strong>Usuario:</strong> @usuario.Username (@usuario.Email)</p>
-        <a href="/actividad/registrar/@IdUsuario" class="btn btn-primary">Registrar Nueva Actividad</a>
-        <a href="/usuarios/detalle/@IdUsuario" class="btn btn-secondary">Volver al Perfil</a>
+        <a href="/actividad/registrar" class="btn btn-primary">Registrar Nueva Actividad</a>
+        <a href="/" class="btn btn-secondary">Volver al Perfil</a>
     </div>
 
     @if (actividades == null)
@@ -89,9 +97,6 @@ else
 }
 
 @code {
-    [Parameter]
-    public Guid IdUsuario { get; set; }
-
     private Usuario? usuario;
     private List<ActividadUsuario> actividades = new();
     private int paginaActual = 1;
@@ -101,18 +106,32 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (!AuthService.EstaAutenticado())
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
         await CargarDatos();
     }
 
     private async Task CargarDatos()
     {
-        usuario = await UsuarioRepository.GetByIdAsync(IdUsuario);
+        usuario = await AuthService.GetUsuarioActualAsync();
+        if (usuario == null)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
         await CargarActividades();
     }
 
     private async Task CargarActividades()
     {
-        var resultado = await ActividadRepository.GetPagedByUsuarioAsync(IdUsuario, paginaActual, pageSize);
+        if (usuario == null) return;
+        
+        var resultado = await ActividadRepository.GetPagedByUsuarioAsync(usuario.Id, paginaActual, pageSize);
         actividades = resultado.actividades;
         totalRegistros = resultado.total;
     }

@@ -38,6 +38,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Logros/CrearLogro.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9ncm9zXENyZWFyTG9ncm8ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -48,6 +52,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Logros/ListaLogros.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9ncm9zXExpc3RhTG9ncm9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Perfil/EditarPerfil.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVyZmlsXEVkaXRhclBlcmZpbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Registro.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVnaXN0cm8ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Usuarios/CrearUsuario.razor]
@@ -77,6 +89,14 @@ build_metadata.AdditionalFiles.CssScope = b-dh4fmu2eae
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Shared/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-zw49ory3bw
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Auth/Logout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aFxMb2dvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Auth/SetAuth.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aFxTZXRBdXRoLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
 
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s

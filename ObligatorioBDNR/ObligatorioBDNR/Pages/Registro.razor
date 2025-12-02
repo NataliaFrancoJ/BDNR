@@ -1,0 +1,152 @@
+@page "/registro"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Registro - Duolingo</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="text-center mb-0">Crear Cuenta</h3>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@registroModel" OnValidSubmit="@RegistrarAsync">
+                        <DataAnnotationsValidator />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <InputText @bind-Value="registroModel.Email" class="form-control" type="email" />
+                            <ValidationMessage For="@(() => registroModel.Email)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de Usuario</label>
+                            <InputText @bind-Value="registroModel.Username" class="form-control" />
+                            <ValidationMessage For="@(() => registroModel.Username)" />
+                            <small class="form-text text-muted">Este será tu nombre visible en la plataforma</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <InputText @bind-Value="registroModel.Password" class="form-control" type="password" />
+                            <ValidationMessage For="@(() => registroModel.Password)" />
+                            <small class="form-text text-muted">Mínimo 6 caracteres</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Confirmar Contraseña</label>
+                            <InputText @bind-Value="registroModel.ConfirmPassword" class="form-control" type="password" />
+                            <ValidationMessage For="@(() => registroModel.ConfirmPassword)" />
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(mensajeError))
+                        {
+                            <div class="alert alert-danger">
+                                <strong>Error:</strong> @mensajeError
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(mensajeExito))
+                        {
+                            <div class="alert alert-success">@mensajeExito</div>
+                        }
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success" disabled="@cargando">
+                                @(cargando ? "Registrando..." : "Registrarse")
+                            </button>
+                        </div>
+                    </EditForm>
+
+                    <div class="mt-3 text-center">
+                        <p>¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegistroModel registroModel = new();
+    private string mensajeError = string.Empty;
+    private string mensajeExito = string.Empty;
+    private bool cargando = false;
+
+    protected override void OnInitialized()
+    {
+        // Si ya está autenticado, redirigir al dashboard
+        if (AuthService.EstaAutenticado())
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private async Task RegistrarAsync()
+    {
+        cargando = true;
+        mensajeError = string.Empty;
+        mensajeExito = string.Empty;
+
+        try
+        {
+            // Validar que las contraseñas coincidan
+            if (registroModel.Password != registroModel.ConfirmPassword)
+            {
+                mensajeError = "Las contraseñas no coinciden";
+                cargando = false;
+                return;
+            }
+
+            var (exito, mensaje, usuario) = await AuthService.RegistrarAsync(
+                registroModel.Email,
+                registroModel.Username,
+                registroModel.Password
+            );
+
+            if (exito && usuario != null)
+            {
+                mensajeExito = "Usuario registrado exitosamente. Redirigiendo...";
+                StateHasChanged();
+                
+                // Esperar un momento para mostrar el mensaje
+                await Task.Delay(500);
+                
+                // Redirigir a una página intermedia que establecerá la autenticación
+                await JSRuntime.InvokeVoidAsync("eval", $"window.location.href = '/auth/set?userId={usuario.Id}&returnUrl=/'");
+            }
+            else
+            {
+                mensajeError = mensaje ?? "Error desconocido al registrar usuario";
+                cargando = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al registrar: {ex.Message}. Detalles: {ex.InnerException?.Message ?? "Sin detalles adicionales"}";
+            cargando = false;
+        }
+    }
+
+    private class RegistroModel
+    {
+        [Required(ErrorMessage = "El email es requerido")]
+        [EmailAddress(ErrorMessage = "El email no es válido")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El nombre de usuario es requerido")]
+        [MinLength(3, ErrorMessage = "El nombre de usuario debe tener al menos 3 caracteres")]
+        public string Username { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La contraseña es requerida")]
+        [MinLength(6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Debes confirmar la contraseña")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}
+
