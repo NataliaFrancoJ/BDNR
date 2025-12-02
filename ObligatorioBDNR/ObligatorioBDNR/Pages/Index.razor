@@ -176,6 +176,13 @@ else
             return;
         }
 
+        // Recargar desde la base de datos para asegurar datos actualizados
+        var usuarioId = AuthService.GetUsuarioIdActual();
+        if (usuarioId.HasValue)
+        {
+            usuario = await UsuarioRepository.GetByIdAsync(usuarioId.Value);
+        }
+
         logrosDisponibles = await LogroRepository.GetAllAsync();
         cargandoUsuario = false;
     }

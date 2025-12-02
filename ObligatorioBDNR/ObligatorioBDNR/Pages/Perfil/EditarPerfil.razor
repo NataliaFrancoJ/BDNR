@@ -19,7 +19,7 @@ else
 {
     <h1>Editar Mi Perfil</h1>
 
-    <EditForm Model="@usuarioDTO" OnValidSubmit="@ActualizarPerfil">
+    <EditForm Model="@usuarioDTO" OnSubmit="@ActualizarPerfil">
         <DataAnnotationsValidator />
         
         <div class="row">
@@ -48,21 +48,6 @@ else
                     <InputText @bind-Value="usuarioDTO.FotoPerfil" class="form-control" />
                 </div>
 
-                <h3>Progreso</h3>
-                <div class="mb-3">
-                    <label class="form-label">Idioma Principal</label>
-                    <InputText @bind-Value="usuarioDTO.IdiomaPrincipal" class="form-control" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Niveles Completados</label>
-                    <InputNumber @bind-Value="usuarioDTO.NivelesCompletados" class="form-control" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">XP Total</label>
-                    <InputNumber @bind-Value="usuarioDTO.XpTotal" class="form-control" />
-                </div>
             </div>
 
             <div class="col-md-6">
@@ -195,18 +180,34 @@ else
         }
     }
 
-    private async Task ActualizarPerfil()
+    private async Task ActualizarPerfil(EditContext editContext)
     {
+        // Mensaje de depuración
+        mensajeError = "Iniciando actualización...";
         guardando = true;
-        mensajeError = string.Empty;
         mensajeExito = string.Empty;
+        StateHasChanged();
+        await Task.Delay(100); // Pequeño delay para que se vea el mensaje
 
         try
         {
+            // Validar el formulario manualmente
+            if (!editContext.Validate())
+            {
+                var errores = string.Join(", ", editContext.GetValidationMessages());
+                mensajeError = $"Errores de validación: {errores}";
+                guardando = false;
+                StateHasChanged();
+                return;
+            }
+            
+            mensajeError = string.Empty; // Limpiar mensaje de depuración
+
             if (usuario == null)
             {
                 mensajeError = "Usuario no encontrado.";
                 guardando = false;
+                StateHasChanged();
                 return;
             }
 
@@ -215,6 +216,7 @@ else
             {
                 mensajeError = "No tienes permiso para editar este perfil.";
                 guardando = false;
+                StateHasChanged();
                 return;
             }
 
@@ -224,6 +226,7 @@ else
             {
                 mensajeError = "Ya existe otro usuario con este email.";
                 guardando = false;
+                StateHasChanged();
                 return;
             }
 
@@ -233,6 +236,7 @@ else
             {
                 mensajeError = "Ya existe otro usuario con este username.";
                 guardando = false;
+                StateHasChanged();
                 return;
             }
 
@@ -259,11 +263,12 @@ else
                 CompartirActividad = usuarioDTO.CompartirActividad
             };
 
+            // Mantener los valores originales de ProgresoGeneral (no se pueden editar)
             usuario.ProgresoGeneral = new ProgresoGeneral
             {
-                IdiomaPrincipal = usuarioDTO.IdiomaPrincipal,
-                NivelesCompletados = usuarioDTO.NivelesCompletados,
-                XpTotal = usuarioDTO.XpTotal
+                IdiomaPrincipal = usuario.ProgresoGeneral?.IdiomaPrincipal ?? "Español",
+                NivelesCompletados = usuario.ProgresoGeneral?.NivelesCompletados ?? 0,
+                XpTotal = usuario.ProgresoGeneral?.XpTotal ?? 0
             };
 
             usuario.Suscripcion = new Suscripcion
@@ -285,18 +290,59 @@ else
                 }
             };
 
-            await UsuarioRepository.UpdateAsync(usuario.Id, usuario);
+            // Asegurarse de que el ID del usuario se mantiene
+            usuario.Id = usuarioId.Value;
             
-            // Actualizar el username en la sesión
-            Navigation.NavigateTo("/");
+            // Guardar el email antes de actualizar para verificar
+            var emailAntes = usuario.Email;
+            var emailDespues = usuarioDTO.Email;
+            
+            var resultado = await UsuarioRepository.UpdateAsync(usuario.Id, usuario);
+            
+            if (resultado)
+            {
+                // Verificar que realmente se actualizó en la base de datos
+                var usuarioVerificado = await UsuarioRepository.GetByIdAsync(usuario.Id);
+                
+                // También verificar buscando por el nuevo email
+                var usuarioPorEmail = await UsuarioRepository.GetByEmailAsync(emailDespues);
+                
+                if (usuarioVerificado != null && usuarioVerificado.Email == emailDespues && usuarioPorEmail != null)
+                {
+                    mensajeExito = $"Perfil actualizado correctamente. Email actualizado de '{emailAntes}' a '{emailDespues}'. " +
+                                   $"Verificado en BD: ID={usuarioVerificado.Id}, Email={usuarioVerificado.Email}";
+                    usuario = usuarioVerificado;
+                    await CargarUsuario();
+                }
+                else
+                {
+                    mensajeError = $"Error: El email no se actualizó correctamente. " +
+                                   $"Email esperado: {emailDespues}, " +
+                                   $"Email en BD (por ID): {usuarioVerificado?.Email ?? "null"}, " +
+                                   $"Usuario encontrado por email: {(usuarioPorEmail != null ? "Sí" : "No")}";
+                    guardando = false;
+                    StateHasChanged();
+                    return;
+                }
+                
+                StateHasChanged();
+                
+                // Esperar un momento antes de redirigir para que el usuario vea el mensaje
+                await Task.Delay(2000);
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                mensajeError = "No se pudo actualizar el perfil. Por favor, intenta nuevamente.";
+                guardando = false;
+                StateHasChanged();
+            }
         }
         catch (Exception ex)
         {
             mensajeError = $"Error al actualizar perfil: {ex.Message}";
-        }
-        finally
-        {
             guardando = false;
+            StateHasChanged();
         }
     }
 }

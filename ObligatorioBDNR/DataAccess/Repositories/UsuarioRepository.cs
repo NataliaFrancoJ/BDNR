@@ -60,8 +60,15 @@ public class UsuarioRepository
     /// </summary>
     public async Task<bool> UpdateAsync(Guid id, Usuario usuario)
     {
-        var result = await _collection.ReplaceOneAsync(u => u.Id == id, usuario);
-        return result.ModifiedCount > 0;
+        // Asegurarse de que el ID del usuario coincida con el ID buscado
+        usuario.Id = id;
+        
+        // Usar IsUpsert = false para que solo actualice si existe
+        var options = new ReplaceOptions { IsUpsert = false };
+        var result = await _collection.ReplaceOneAsync(u => u.Id == id, usuario, options);
+        
+        // Retornar true si se modificó o si se encontró el documento (matched)
+        return result.ModifiedCount > 0 || result.MatchedCount > 0;
     }
 
     /// <summary>

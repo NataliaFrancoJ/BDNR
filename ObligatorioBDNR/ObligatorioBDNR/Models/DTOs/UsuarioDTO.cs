@@ -17,8 +17,8 @@ public class UsuarioDTO
 
     public string FotoPerfil { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "La contraseña es requerida")]
-    [MinLength(6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres")]
+    // Password es opcional (solo requerido en registro, no en edición)
+    // No tiene validación MinLength porque en edición se usa el campo 'nuevaPassword' separado
     public string Password { get; set; } = string.Empty;
 
     public bool Tiene2FA { get; set; }
