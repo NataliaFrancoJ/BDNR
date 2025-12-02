@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "r+b1u5zgoV/l3r56nOYg8lp4tWEZBEJIjPQbtAQ8APlNWRNL7r5MZrgcfSd9qz/NTozsRMw4wkVSewvcRBxgyg==",
+  "dgSpecHash": "9g+8HYRSgS0=",
   "success": true,
   "projectFilePath": "D:\\BDNR\\ObligatorioBDNR\\ObligatorioBDNR\\ObligatorioBDNR.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Usuario\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Usuario\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
     "C:\\Users\\Usuario\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\2.0.0\\microsoft.extensions.logging.abstractions.2.0.0.nupkg.sha512",
     "C:\\Users\\Usuario\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",

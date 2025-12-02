@@ -1,0 +1,280 @@
+@page "/usuarios/editar/{Id:guid}"
+@inject UsuarioRepository UsuarioRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Editar Usuario - Duolingo</PageTitle>
+
+<h1>Editar Usuario</h1>
+
+@if (usuario == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <EditForm Model="@usuarioDTO" OnValidSubmit="@ActualizarUsuario">
+        <DataAnnotationsValidator />
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Información Básica</h3>
+                
+                <div class="mb-3">
+                    <label class="form-label">Email *</label>
+                    <InputText @bind-Value="usuarioDTO.Email" class="form-control" />
+                    <ValidationMessage For="@(() => usuarioDTO.Email)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Username *</label>
+                    <InputText @bind-Value="usuarioDTO.Username" class="form-control" />
+                    <ValidationMessage For="@(() => usuarioDTO.Username)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nueva Contraseña (dejar vacío para no cambiar)</label>
+                    <InputText type="password" @bind-Value="nuevaPassword" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Foto de Perfil (URL)</label>
+                    <InputText @bind-Value="usuarioDTO.FotoPerfil" class="form-control" />
+                </div>
+
+                <h3>Progreso</h3>
+                <div class="mb-3">
+                    <label class="form-label">Idioma Principal</label>
+                    <InputText @bind-Value="usuarioDTO.IdiomaPrincipal" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Niveles Completados</label>
+                    <InputNumber @bind-Value="usuarioDTO.NivelesCompletados" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">XP Total</label>
+                    <InputNumber @bind-Value="usuarioDTO.XpTotal" class="form-control" />
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h3>Configuración de Privacidad</h3>
+                
+                <div class="mb-3 form-check">
+                    <InputCheckbox @bind-Value="usuarioDTO.PerfilVisible" class="form-check-input" />
+                    <label class="form-check-label">Perfil Visible</label>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <InputCheckbox @bind-Value="usuarioDTO.MostrarRacha" class="form-check-input" />
+                    <label class="form-check-label">Mostrar Racha</label>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <InputCheckbox @bind-Value="usuarioDTO.PermitirMensajes" class="form-check-input" />
+                    <label class="form-check-label">Permitir Mensajes</label>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Compartir Actividad</label>
+                    <InputSelect @bind-Value="usuarioDTO.CompartirActividad" class="form-select">
+                        <option value="Nadie">Nadie</option>
+                        <option value="Amigos">Amigos</option>
+                        <option value="Todos">Todos</option>
+                    </InputSelect>
+                </div>
+
+                <h3>Suscripción</h3>
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Suscripción</label>
+                    <InputSelect @bind-Value="usuarioDTO.TipoSuscripcion" class="form-select">
+                        <option value="Gratis">Gratis</option>
+                        <option value="Plus">Plus</option>
+                    </InputSelect>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <InputCheckbox @bind-Value="usuarioDTO.AutoRenovacion" class="form-check-input" />
+                    <label class="form-check-label">Auto Renovación</label>
+                </div>
+
+                <h3>Notificaciones</h3>
+                <div class="mb-3 form-check">
+                    <InputCheckbox @bind-Value="usuarioDTO.NotificacionesEmail" class="form-check-input" />
+                    <label class="form-check-label">Notificaciones por Email</label>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <InputCheckbox @bind-Value="usuarioDTO.NotificacionesPush" class="form-check-input" />
+                    <label class="form-check-label">Notificaciones Push</label>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <InputCheckbox @bind-Value="usuarioDTO.RecordatoriosDiarios" class="form-check-input" />
+                    <label class="form-check-label">Recordatorios Diarios</label>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <div class="alert alert-danger">@mensajeError</div>
+        }
+
+        @if (!string.IsNullOrEmpty(mensajeExito))
+        {
+            <div class="alert alert-success">@mensajeExito</div>
+        }
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary" disabled="@guardando">@(guardando ? "Guardando..." : "Guardar Cambios")</button>
+            <a href="/usuarios" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Usuario? usuario;
+    private UsuarioDTO usuarioDTO = new();
+    private string nuevaPassword = string.Empty;
+    private string mensajeError = string.Empty;
+    private string mensajeExito = string.Empty;
+    private bool guardando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarUsuario();
+    }
+
+    private async Task CargarUsuario()
+    {
+        usuario = await UsuarioRepository.GetByIdAsync(Id);
+        if (usuario != null)
+        {
+            usuarioDTO = new UsuarioDTO
+            {
+                Email = usuario.Email,
+                Username = usuario.Username,
+                FotoPerfil = usuario.FotoPerfil ?? string.Empty,
+                Tiene2FA = usuario.Autenticacion?.Tiene2FA ?? false,
+                Metodo2FA = usuario.Autenticacion?.Metodo2FA ?? string.Empty,
+                PerfilVisible = usuario.ConfiguracionPrivacidad?.PerfilVisible ?? true,
+                MostrarRacha = usuario.ConfiguracionPrivacidad?.MostrarRacha ?? true,
+                PermitirMensajes = usuario.ConfiguracionPrivacidad?.PermitirMensajes ?? true,
+                CompartirActividad = usuario.ConfiguracionPrivacidad?.CompartirActividad ?? "Amigos",
+                IdiomaPrincipal = usuario.ProgresoGeneral?.IdiomaPrincipal ?? "Español",
+                NivelesCompletados = usuario.ProgresoGeneral?.NivelesCompletados ?? 0,
+                XpTotal = usuario.ProgresoGeneral?.XpTotal ?? 0,
+                TipoSuscripcion = usuario.Suscripcion?.Tipo ?? "Gratis",
+                AutoRenovacion = usuario.Suscripcion?.AutoRenovacion ?? false,
+                IdiomasInteres = usuario.Preferencias?.IdiomasInteres ?? new List<string>(),
+                NotificacionesEmail = usuario.Preferencias?.Notificaciones?.Email ?? true,
+                NotificacionesPush = usuario.Preferencias?.Notificaciones?.Push ?? true,
+                RecordatoriosDiarios = usuario.Preferencias?.Notificaciones?.RecordatoriosDiarios ?? true
+            };
+        }
+    }
+
+    private async Task ActualizarUsuario()
+    {
+        guardando = true;
+        mensajeError = string.Empty;
+        mensajeExito = string.Empty;
+
+        try
+        {
+            if (usuario == null)
+            {
+                mensajeError = "Usuario no encontrado.";
+                guardando = false;
+                return;
+            }
+
+            // Verificar si el email ya existe en otro usuario
+            var usuarioConEmail = await UsuarioRepository.GetByEmailAsync(usuarioDTO.Email);
+            if (usuarioConEmail != null && usuarioConEmail.Id != Id)
+            {
+                mensajeError = "Ya existe otro usuario con este email.";
+                guardando = false;
+                return;
+            }
+
+            // Verificar si el username ya existe en otro usuario
+            var usuarioConUsername = await UsuarioRepository.GetByUsernameAsync(usuarioDTO.Username);
+            if (usuarioConUsername != null && usuarioConUsername.Id != Id)
+            {
+                mensajeError = "Ya existe otro usuario con este username.";
+                guardando = false;
+                return;
+            }
+
+            // Actualizar el usuario
+            usuario.Email = usuarioDTO.Email;
+            usuario.Username = usuarioDTO.Username;
+            usuario.FotoPerfil = usuarioDTO.FotoPerfil;
+
+            if (!string.IsNullOrEmpty(nuevaPassword))
+            {
+                usuario.Autenticacion ??= new Autenticacion();
+                usuario.Autenticacion.PasswordHash = BCrypt.Net.BCrypt.HashPassword(nuevaPassword);
+            }
+
+            usuario.Autenticacion ??= new Autenticacion();
+            usuario.Autenticacion.Tiene2FA = usuarioDTO.Tiene2FA;
+            usuario.Autenticacion.Metodo2FA = usuarioDTO.Metodo2FA;
+
+            usuario.ConfiguracionPrivacidad = new ConfiguracionPrivacidad
+            {
+                PerfilVisible = usuarioDTO.PerfilVisible,
+                MostrarRacha = usuarioDTO.MostrarRacha,
+                PermitirMensajes = usuarioDTO.PermitirMensajes,
+                CompartirActividad = usuarioDTO.CompartirActividad
+            };
+
+            usuario.ProgresoGeneral = new ProgresoGeneral
+            {
+                IdiomaPrincipal = usuarioDTO.IdiomaPrincipal,
+                NivelesCompletados = usuarioDTO.NivelesCompletados,
+                XpTotal = usuarioDTO.XpTotal
+            };
+
+            usuario.Suscripcion = new Suscripcion
+            {
+                Tipo = usuarioDTO.TipoSuscripcion,
+                FechaInicio = usuario.Suscripcion?.FechaInicio ?? (usuarioDTO.TipoSuscripcion == "Plus" ? DateTime.UtcNow : null),
+                FechaFin = usuario.Suscripcion?.FechaFin ?? (usuarioDTO.TipoSuscripcion == "Plus" ? DateTime.UtcNow.AddMonths(1) : null),
+                AutoRenovacion = usuarioDTO.AutoRenovacion
+            };
+
+            usuario.Preferencias = new Preferencias
+            {
+                IdiomasInteres = usuarioDTO.IdiomasInteres,
+                Notificaciones = new Notificaciones
+                {
+                    Email = usuarioDTO.NotificacionesEmail,
+                    Push = usuarioDTO.NotificacionesPush,
+                    RecordatoriosDiarios = usuarioDTO.RecordatoriosDiarios
+                }
+            };
+
+            await UsuarioRepository.UpdateAsync(Id, usuario);
+            mensajeExito = "Usuario actualizado exitosamente.";
+            
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/usuarios");
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al actualizar usuario: {ex.Message}";
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+}
+

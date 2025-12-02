@@ -1,0 +1,89 @@
+@page "/usuarios"
+@inject UsuarioRepository UsuarioRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Usuarios - Duolingo</PageTitle>
+
+<h1>Lista de Usuarios</h1>
+
+<div class="mb-3">
+    <a href="/usuarios/crear" class="btn btn-primary">
+        Crear Nuevo Usuario
+    </a>
+</div>
+
+@if (usuarios == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (!usuarios.Any())
+{
+    <div class="alert alert-info">
+        No hay usuarios registrados. <a href="/usuarios/crear">Crea el primer usuario</a>.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Idioma Principal</th>
+                <th>XP Total</th>
+                <th>Niveles</th>
+                <th>Suscripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in usuarios)
+            {
+                <tr>
+                    <td>@usuario.Username</td>
+                    <td>@usuario.Email</td>
+                    <td>@(usuario.ProgresoGeneral?.IdiomaPrincipal ?? "N/A")</td>
+                    <td>@(usuario.ProgresoGeneral?.XpTotal ?? 0)</td>
+                    <td>@(usuario.ProgresoGeneral?.NivelesCompletados ?? 0)</td>
+                    <td>
+                        <span class="badge @(usuario.Suscripcion?.Tipo == "Plus" ? "bg-success" : "bg-secondary")">
+                            @(usuario.Suscripcion?.Tipo ?? "Gratis")
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/usuarios/detalle/@usuario.Id" class="btn btn-sm btn-info">Ver</a>
+                        <a href="/usuarios/editar/@usuario.Id" class="btn btn-sm btn-warning">Editar</a>
+                        <button class="btn btn-sm btn-danger" @onclick="() => EliminarUsuario(usuario.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Usuario> usuarios = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarUsuarios();
+    }
+
+    private async Task CargarUsuarios()
+    {
+        usuarios = await UsuarioRepository.GetAllAsync();
+    }
+
+    private async Task EliminarUsuario(Guid id)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", "¿Está seguro de que desea eliminar este usuario?"))
+        {
+            await UsuarioRepository.DeleteAsync(id);
+            await CargarUsuarios();
+        }
+    }
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
+}
+

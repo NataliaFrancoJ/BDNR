@@ -1,0 +1,227 @@
+@page "/usuarios/crear"
+@inject UsuarioRepository UsuarioRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Crear Usuario - Duolingo</PageTitle>
+
+<h1>Crear Nuevo Usuario</h1>
+
+<EditForm Model="@usuarioDTO" OnValidSubmit="@CrearUsuarioAsync">
+    <DataAnnotationsValidator />
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Información Básica</h3>
+            
+            <div class="mb-3">
+                <label class="form-label">Email *</label>
+                <InputText @bind-Value="usuarioDTO.Email" class="form-control" />
+                <ValidationMessage For="@(() => usuarioDTO.Email)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Username *</label>
+                <InputText @bind-Value="usuarioDTO.Username" class="form-control" />
+                <ValidationMessage For="@(() => usuarioDTO.Username)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Contraseña *</label>
+                <InputText type="password" @bind-Value="usuarioDTO.Password" class="form-control" />
+                <ValidationMessage For="@(() => usuarioDTO.Password)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Foto de Perfil (URL)</label>
+                <InputText @bind-Value="usuarioDTO.FotoPerfil" class="form-control" />
+            </div>
+
+            <h3>Progreso</h3>
+            <div class="mb-3">
+                <label class="form-label">Idioma Principal</label>
+                <InputText @bind-Value="usuarioDTO.IdiomaPrincipal" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Niveles Completados</label>
+                <InputNumber @bind-Value="usuarioDTO.NivelesCompletados" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">XP Total</label>
+                <InputNumber @bind-Value="usuarioDTO.XpTotal" class="form-control" />
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Configuración de Privacidad</h3>
+            
+            <div class="mb-3 form-check">
+                <InputCheckbox @bind-Value="usuarioDTO.PerfilVisible" class="form-check-input" />
+                <label class="form-check-label">Perfil Visible</label>
+            </div>
+
+            <div class="mb-3 form-check">
+                <InputCheckbox @bind-Value="usuarioDTO.MostrarRacha" class="form-check-input" />
+                <label class="form-check-label">Mostrar Racha</label>
+            </div>
+
+            <div class="mb-3 form-check">
+                <InputCheckbox @bind-Value="usuarioDTO.PermitirMensajes" class="form-check-input" />
+                <label class="form-check-label">Permitir Mensajes</label>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Compartir Actividad</label>
+                <InputSelect @bind-Value="usuarioDTO.CompartirActividad" class="form-select">
+                    <option value="Nadie">Nadie</option>
+                    <option value="Amigos">Amigos</option>
+                    <option value="Todos">Todos</option>
+                </InputSelect>
+            </div>
+
+            <h3>Suscripción</h3>
+            <div class="mb-3">
+                <label class="form-label">Tipo de Suscripción</label>
+                <InputSelect @bind-Value="usuarioDTO.TipoSuscripcion" class="form-select">
+                    <option value="Gratis">Gratis</option>
+                    <option value="Plus">Plus</option>
+                </InputSelect>
+            </div>
+
+            <div class="mb-3 form-check">
+                <InputCheckbox @bind-Value="usuarioDTO.AutoRenovacion" class="form-check-input" />
+                <label class="form-check-label">Auto Renovación</label>
+            </div>
+
+            <h3>Notificaciones</h3>
+            <div class="mb-3 form-check">
+                <InputCheckbox @bind-Value="usuarioDTO.NotificacionesEmail" class="form-check-input" />
+                <label class="form-check-label">Notificaciones por Email</label>
+            </div>
+
+            <div class="mb-3 form-check">
+                <InputCheckbox @bind-Value="usuarioDTO.NotificacionesPush" class="form-check-input" />
+                <label class="form-check-label">Notificaciones Push</label>
+            </div>
+
+            <div class="mb-3 form-check">
+                <InputCheckbox @bind-Value="usuarioDTO.RecordatoriosDiarios" class="form-check-input" />
+                <label class="form-check-label">Recordatorios Diarios</label>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger">@mensajeError</div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success">@mensajeExito</div>
+    }
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary" disabled="@guardando">@(guardando ? "Guardando..." : "Crear Usuario")</button>
+        <a href="/usuarios" class="btn btn-secondary">Cancelar</a>
+    </div>
+</EditForm>
+
+@code {
+    private UsuarioDTO usuarioDTO = new();
+    private string mensajeError = string.Empty;
+    private string mensajeExito = string.Empty;
+    private bool guardando = false;
+
+    private async Task CrearUsuarioAsync()
+    {
+        guardando = true;
+        mensajeError = string.Empty;
+        mensajeExito = string.Empty;
+
+        try
+        {
+            // Verificar si el email ya existe
+            var usuarioExistente = await UsuarioRepository.GetByEmailAsync(usuarioDTO.Email);
+            if (usuarioExistente != null)
+            {
+                mensajeError = "Ya existe un usuario con este email.";
+                guardando = false;
+                return;
+            }
+
+            // Verificar si el username ya existe
+            usuarioExistente = await UsuarioRepository.GetByUsernameAsync(usuarioDTO.Username);
+            if (usuarioExistente != null)
+            {
+                mensajeError = "Ya existe un usuario con este username.";
+                guardando = false;
+                return;
+            }
+
+            // Crear el usuario desde el DTO
+            var usuario = new Usuario
+            {
+                Id = Guid.NewGuid(),
+                Email = usuarioDTO.Email,
+                Username = usuarioDTO.Username,
+                FotoPerfil = usuarioDTO.FotoPerfil,
+                FechaCreacion = DateTime.UtcNow,
+                Autenticacion = new Autenticacion
+                {
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(usuarioDTO.Password),
+                    Tiene2FA = usuarioDTO.Tiene2FA,
+                    Metodo2FA = usuarioDTO.Metodo2FA
+                },
+                ConfiguracionPrivacidad = new ConfiguracionPrivacidad
+                {
+                    PerfilVisible = usuarioDTO.PerfilVisible,
+                    MostrarRacha = usuarioDTO.MostrarRacha,
+                    PermitirMensajes = usuarioDTO.PermitirMensajes,
+                    CompartirActividad = usuarioDTO.CompartirActividad
+                },
+                ProgresoGeneral = new ProgresoGeneral
+                {
+                    IdiomaPrincipal = usuarioDTO.IdiomaPrincipal,
+                    NivelesCompletados = usuarioDTO.NivelesCompletados,
+                    XpTotal = usuarioDTO.XpTotal
+                },
+                Suscripcion = new Suscripcion
+                {
+                    Tipo = usuarioDTO.TipoSuscripcion,
+                    FechaInicio = usuarioDTO.TipoSuscripcion == "Plus" ? DateTime.UtcNow : null,
+                    FechaFin = usuarioDTO.TipoSuscripcion == "Plus" ? DateTime.UtcNow.AddMonths(1) : null,
+                    AutoRenovacion = usuarioDTO.AutoRenovacion
+                },
+                Preferencias = new Preferencias
+                {
+                    IdiomasInteres = usuarioDTO.IdiomasInteres,
+                    Notificaciones = new Notificaciones
+                    {
+                        Email = usuarioDTO.NotificacionesEmail,
+                        Push = usuarioDTO.NotificacionesPush,
+                        RecordatoriosDiarios = usuarioDTO.RecordatoriosDiarios
+                    }
+                },
+                Logros = new List<LogroUsuario>(),
+                Amigos = new List<Amigo>()
+            };
+
+            await UsuarioRepository.InsertAsync(usuario);
+            mensajeExito = "Usuario creado exitosamente.";
+            
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/usuarios");
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al crear usuario: {ex.Message}";
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+}
+

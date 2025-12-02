@@ -1,0 +1,128 @@
+@page "/logros/editar/{Id}"
+@inject LogroRepository LogroRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Editar Logro - Duolingo</PageTitle>
+
+<h1>Editar Logro</h1>
+
+@if (logro == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <EditForm Model="@logroDTO" OnValidSubmit="@ActualizarLogro">
+        <DataAnnotationsValidator />
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">ID del Logro</label>
+                    <InputText @bind-Value="logroDTO.Id" class="form-control" readonly />
+                    <small class="form-text text-muted">El ID no se puede modificar</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre *</label>
+                    <InputText @bind-Value="logroDTO.Nombre" class="form-control" />
+                    <ValidationMessage For="@(() => logroDTO.Nombre)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción *</label>
+                    <InputTextArea @bind-Value="logroDTO.Descripcion" class="form-control" rows="4" />
+                    <ValidationMessage For="@(() => logroDTO.Descripcion)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">XP Recompensa *</label>
+                    <InputNumber @bind-Value="logroDTO.XpRecompensa" class="form-control" />
+                    <ValidationMessage For="@(() => logroDTO.XpRecompensa)" />
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <div class="alert alert-danger">@mensajeError</div>
+        }
+
+        @if (!string.IsNullOrEmpty(mensajeExito))
+        {
+            <div class="alert alert-success">@mensajeExito</div>
+        }
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary" disabled="@guardando">@(guardando ? "Guardando..." : "Guardar Cambios")</button>
+            <a href="/logros" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private LogroDefinicion? logro;
+    private LogroDTO logroDTO = new();
+    private string mensajeError = string.Empty;
+    private string mensajeExito = string.Empty;
+    private bool guardando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarLogro();
+    }
+
+    private async Task CargarLogro()
+    {
+        logro = await LogroRepository.GetByIdAsync(Id);
+        if (logro != null)
+        {
+            logroDTO = new LogroDTO
+            {
+                Id = logro.Id,
+                Nombre = logro.Nombre,
+                Descripcion = logro.Descripcion,
+                XpRecompensa = logro.XpRecompensa
+            };
+        }
+    }
+
+    private async Task ActualizarLogro()
+    {
+        guardando = true;
+        mensajeError = string.Empty;
+        mensajeExito = string.Empty;
+
+        try
+        {
+            if (logro == null)
+            {
+                mensajeError = "Logro no encontrado.";
+                guardando = false;
+                return;
+            }
+
+            logro.Nombre = logroDTO.Nombre;
+            logro.Descripcion = logroDTO.Descripcion;
+            logro.XpRecompensa = logroDTO.XpRecompensa;
+
+            await LogroRepository.UpdateAsync(Id, logro);
+            mensajeExito = "Logro actualizado exitosamente.";
+            
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/logros");
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al actualizar logro: {ex.Message}";
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+}
+

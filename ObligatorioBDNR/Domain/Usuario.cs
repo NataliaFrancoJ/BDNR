@@ -7,6 +7,7 @@ namespace Domain;
 public class Usuario
 {
     [BsonId]
+    [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
 
     public string Email { get; set; }
@@ -56,6 +57,7 @@ public class LogroUsuario
 
 public class Amigo
 {
+    [BsonRepresentation(BsonType.String)]
     public Guid IdUsuario { get; set; }
     public string Username { get; set; }
 }

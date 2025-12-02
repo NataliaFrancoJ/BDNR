@@ -8,12 +8,12 @@
 
     <ItemGroup>
       <PackageReference Include="MongoDB.Driver" Version="3.5.2" />
+      <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\MongoDB\" />
-      <Folder Include="Models\Usuario\" />
-      <Folder Include="Pages\GestionUsuarios\" />
+      <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+      <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>

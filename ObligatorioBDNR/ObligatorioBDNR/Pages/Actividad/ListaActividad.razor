@@ -1,0 +1,129 @@
+@page "/actividad/{IdUsuario:guid}"
+@inject ActividadUsuarioRepository ActividadRepository
+@inject UsuarioRepository UsuarioRepository
+
+<PageTitle>Actividad del Usuario - Duolingo</PageTitle>
+
+<h1>Actividad del Usuario</h1>
+
+@if (usuario == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <div class="mb-3">
+        <p><strong>Usuario:</strong> @usuario.Username (@usuario.Email)</p>
+        <a href="/actividad/registrar/@IdUsuario" class="btn btn-primary">Registrar Nueva Actividad</a>
+        <a href="/usuarios/detalle/@IdUsuario" class="btn btn-secondary">Volver al Perfil</a>
+    </div>
+
+    @if (actividades == null)
+    {
+        <p><em>Cargando actividades...</em></p>
+    }
+    else if (!actividades.Any())
+    {
+        <div class="alert alert-info">
+            Este usuario no tiene actividades registradas.
+        </div>
+    }
+    else
+    {
+        <div class="mb-3">
+            <label class="form-label">Página:</label>
+            <select class="form-select d-inline-block w-auto" @onchange="CambiarPagina">
+                @for (int i = 1; i <= totalPaginas; i++)
+                {
+                    <option value="@i" selected="@(i == paginaActual)">@i</option>
+                }
+            </select>
+            <span class="ms-2">Mostrando @((paginaActual - 1) * pageSize + 1) - @(Math.Min(paginaActual * pageSize, (int)totalRegistros)) de @totalRegistros</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                        <th>Total XP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var actividad in actividades)
+                    {
+                        <tr>
+                            <td>@actividad.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (actividad.Acciones != null && actividad.Acciones.Any())
+                                {
+                                    <ul class="list-unstyled mb-0">
+                                        @foreach (var accion in actividad.Acciones)
+                                        {
+                                            <li>
+                                                <span class="badge bg-info">@accion.Tipo</span>
+                                                @if (accion.XpGanado > 0)
+                                                {
+                                                    <span class="text-success">+@accion.XpGanado XP</span>
+                                                }
+                                                <small class="text-muted">@accion.Timestamp.ToString("HH:mm")</small>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Sin acciones</span>
+                                }
+                            </td>
+                            <td>
+                                <strong>@(actividad.Acciones?.Sum(a => a.XpGanado) ?? 0) XP</strong>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public Guid IdUsuario { get; set; }
+
+    private Usuario? usuario;
+    private List<ActividadUsuario> actividades = new();
+    private int paginaActual = 1;
+    private int pageSize = 10;
+    private long totalRegistros = 0;
+    private int totalPaginas => (int)Math.Ceiling((double)totalRegistros / pageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        usuario = await UsuarioRepository.GetByIdAsync(IdUsuario);
+        await CargarActividades();
+    }
+
+    private async Task CargarActividades()
+    {
+        var resultado = await ActividadRepository.GetPagedByUsuarioAsync(IdUsuario, paginaActual, pageSize);
+        actividades = resultado.actividades;
+        totalRegistros = resultado.total;
+    }
+
+    private async Task CambiarPagina(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var nuevaPagina))
+        {
+            paginaActual = nuevaPagina;
+            await CargarActividades();
+        }
+    }
+}
+

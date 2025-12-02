@@ -18,12 +18,68 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\BDNR\ObligatorioBDNR\ObligatorioBDNR
 build_property._RazorSourceGeneratorDebug = 
 
-[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Error.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/HeadOutlet.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xIZWFkT3V0bGV0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Actividad/ListaActividad.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWN0aXZpZGFkXExpc3RhQWN0aXZpZGFkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Actividad/RegistrarActividad.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWN0aXZpZGFkXFJlZ2lzdHJhckFjdGl2aWRhZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Logros/CrearLogro.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9ncm9zXENyZWFyTG9ncm8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Logros/EditarLogro.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9ncm9zXEVkaXRhckxvZ3JvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Logros/ListaLogros.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9ncm9zXExpc3RhTG9ncm9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Usuarios/CrearUsuario.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcQ3JlYXJVc3VhcmlvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Usuarios/DetalleUsuario.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcRGV0YWxsZVVzdWFyaW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Usuarios/EditarUsuario.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcRWRpdGFyVXN1YXJpby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Usuarios/ListaUsuarios.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcTGlzdGFVc3Vhcmlvcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-dh4fmu2eae
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-zw49ory3bw
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Privacy.cshtml]
@@ -32,6 +88,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/_ViewImports.cshtml]

@@ -1,10 +1,15 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain;
 
 public class ActividadUsuario
 {
-    [BsonId] public Guid Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.String)]
+    public Guid Id { get; set; }
+    
+    [BsonRepresentation(BsonType.String)]
     public Guid IdUsuario { get; set; }
     public DateTime Fecha { get; set; }
 

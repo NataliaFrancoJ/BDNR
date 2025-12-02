@@ -1,0 +1,80 @@
+@page "/logros"
+@inject LogroRepository LogroRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Logros - Duolingo</PageTitle>
+
+<h1>Lista de Logros</h1>
+
+<div class="mb-3">
+    <a href="/logros/crear" class="btn btn-primary">
+        Crear Nuevo Logro
+    </a>
+</div>
+
+@if (logros == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (!logros.Any())
+{
+    <div class="alert alert-info">
+        No hay logros definidos. <a href="/logros/crear">Crea el primer logro</a>.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>XP Recompensa</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var logro in logros)
+            {
+                <tr>
+                    <td>@logro.Id</td>
+                    <td><strong>@logro.Nombre</strong></td>
+                    <td>@logro.Descripcion</td>
+                    <td><span class="badge bg-success">+@logro.XpRecompensa XP</span></td>
+                    <td>
+                        <a href="/logros/editar/@logro.Id" class="btn btn-sm btn-warning">Editar</a>
+                        <button class="btn btn-sm btn-danger" @onclick="() => EliminarLogro(logro.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<LogroDefinicion> logros = new();
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarLogros();
+    }
+
+    private async Task CargarLogros()
+    {
+        logros = await LogroRepository.GetAllAsync();
+    }
+
+    private async Task EliminarLogro(string id)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", "¿Está seguro de que desea eliminar este logro?"))
+        {
+            await LogroRepository.DeleteAsync(id);
+            await CargarLogros();
+        }
+    }
+}
+

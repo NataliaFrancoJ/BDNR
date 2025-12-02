@@ -1,0 +1,104 @@
+@page "/logros/crear"
+@inject LogroRepository LogroRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Crear Logro - Duolingo</PageTitle>
+
+<h1>Crear Nuevo Logro</h1>
+
+<EditForm Model="@logroDTO" OnValidSubmit="@CrearLogroAsync">
+    <DataAnnotationsValidator />
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">ID del Logro *</label>
+                <InputText @bind-Value="logroDTO.Id" class="form-control" placeholder="ej: logro_primera_leccion" />
+                <ValidationMessage For="@(() => logroDTO.Id)" />
+                <small class="form-text text-muted">Identificador único del logro (sin espacios, usar guiones bajos)</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Nombre *</label>
+                <InputText @bind-Value="logroDTO.Nombre" class="form-control" />
+                <ValidationMessage For="@(() => logroDTO.Nombre)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descripción *</label>
+                <InputTextArea @bind-Value="logroDTO.Descripcion" class="form-control" rows="4" />
+                <ValidationMessage For="@(() => logroDTO.Descripcion)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">XP Recompensa *</label>
+                <InputNumber @bind-Value="logroDTO.XpRecompensa" class="form-control" />
+                <ValidationMessage For="@(() => logroDTO.XpRecompensa)" />
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger">@mensajeError</div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success">@mensajeExito</div>
+    }
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary" disabled="@guardando">@(guardando ? "Guardando..." : "Crear Logro")</button>
+        <a href="/logros" class="btn btn-secondary">Cancelar</a>
+    </div>
+</EditForm>
+
+@code {
+    private LogroDTO logroDTO = new();
+    private string mensajeError = string.Empty;
+    private string mensajeExito = string.Empty;
+    private bool guardando = false;
+
+    private async Task CrearLogroAsync()
+    {
+        guardando = true;
+        mensajeError = string.Empty;
+        mensajeExito = string.Empty;
+
+        try
+        {
+            // Verificar si el ID ya existe
+            var logroExistente = await LogroRepository.GetByIdAsync(logroDTO.Id);
+            if (logroExistente != null)
+            {
+                mensajeError = "Ya existe un logro con este ID.";
+                guardando = false;
+                return;
+            }
+
+            var logro = new LogroDefinicion
+            {
+                Id = logroDTO.Id,
+                Nombre = logroDTO.Nombre,
+                Descripcion = logroDTO.Descripcion,
+                XpRecompensa = logroDTO.XpRecompensa
+            };
+
+            await LogroRepository.InsertAsync(logro);
+            mensajeExito = "Logro creado exitosamente.";
+            
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/logros");
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al crear logro: {ex.Message}";
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+}
+

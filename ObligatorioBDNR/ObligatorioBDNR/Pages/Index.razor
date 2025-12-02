@@ -1,0 +1,149 @@
+@page "/"
+@page "/dashboard"
+@inject UsuarioRepository UsuarioRepository
+@inject LogroRepository LogroRepository
+@inject ActividadUsuarioRepository ActividadRepository
+
+<PageTitle>Dashboard - Duolingo</PageTitle>
+
+<h1>Dashboard</h1>
+
+@if (usuarios == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (usuarios.Count == 0)
+{
+    <div class="alert alert-info">
+        <h4>¡Bienvenido a Duolingo!</h4>
+        <p>No hay usuarios registrados aún. <a href="/usuarios/crear">Crea el primer usuario</a> para comenzar.</p>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Total de Usuarios</div>
+                <div class="card-body">
+                    <h2 class="card-title">@usuarios.Count</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Total de Logros</div>
+                <div class="card-body">
+                    <h2 class="card-title">@logros.Count</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Total de Actividades</div>
+                <div class="card-body">
+                    <h2 class="card-title">@actividades.Count</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">XP Total</div>
+                <div class="card-body">
+                    <h2 class="card-title">@totalXp</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (usuarioSeleccionado != null)
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3>Perfil de Usuario Seleccionado</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>@usuarioSeleccionado.Username</h4>
+                        <p><strong>Email:</strong> @usuarioSeleccionado.Email</p>
+                        <p><strong>Idioma Principal:</strong> @(usuarioSeleccionado.ProgresoGeneral?.IdiomaPrincipal ?? "No especificado")</p>
+                        <p><strong>Niveles Completados:</strong> @(usuarioSeleccionado.ProgresoGeneral?.NivelesCompletados ?? 0)</p>
+                        <p><strong>XP Total:</strong> @(usuarioSeleccionado.ProgresoGeneral?.XpTotal ?? 0)</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Logros Obtenidos: @(usuarioSeleccionado.Logros?.Count ?? 0)</h5>
+                        @if (usuarioSeleccionado.Logros != null && usuarioSeleccionado.Logros.Any())
+                        {
+                            <ul>
+                                @foreach (var logro in usuarioSeleccionado.Logros.Take(5))
+                                {
+                                    <li>@logro.Nombre - @logro.FechaObtencion.ToString("dd/MM/yyyy")</li>
+                                }
+                            </ul>
+                        }
+                        <h5>Amigos: @(usuarioSeleccionado.Amigos?.Count ?? 0)</h5>
+                        <p><strong>Suscripción:</strong> @(usuarioSeleccionado.Suscripcion?.Tipo ?? "Gratis")</p>
+                    </div>
+                </div>
+                <a href="/usuarios/detalle/@usuarioSeleccionado.Id" class="btn btn-primary">Ver Perfil Completo</a>
+            </div>
+        </div>
+    }
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Seleccionar Usuario para Ver Detalles</h3>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="usuarioSelect" class="form-label">Usuario:</label>
+                <select id="usuarioSelect" class="form-select" @onchange="OnUsuarioSeleccionado">
+                    <option value="">-- Seleccione un usuario --</option>
+                    @foreach (var usuario in usuarios)
+                    {
+                        <option value="@usuario.Id">@usuario.Username (@usuario.Email)</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Usuario> usuarios = new();
+    private List<LogroDefinicion> logros = new();
+    private List<ActividadUsuario> actividades = new();
+    private Usuario? usuarioSeleccionado;
+    private int totalXp = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        usuarios = await UsuarioRepository.GetAllAsync();
+        logros = await LogroRepository.GetAllAsync();
+        actividades = await ActividadRepository.GetAllAsync();
+        
+        totalXp = usuarios
+            .Where(u => u.ProgresoGeneral != null)
+            .Sum(u => u.ProgresoGeneral!.XpTotal);
+    }
+
+    private async Task OnUsuarioSeleccionado(ChangeEventArgs e)
+    {
+        if (Guid.TryParse(e.Value?.ToString(), out var usuarioId))
+        {
+            usuarioSeleccionado = await UsuarioRepository.GetByIdAsync(usuarioId);
+        }
+        else
+        {
+            usuarioSeleccionado = null;
+        }
+        StateHasChanged();
+    }
+}
+
