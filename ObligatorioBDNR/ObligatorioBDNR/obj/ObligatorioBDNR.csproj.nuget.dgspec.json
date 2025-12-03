@@ -48,6 +48,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Neo4j.Driver": {
+              "target": "Package",
+              "version": "[5.15.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

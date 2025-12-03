@@ -1,0 +1,67 @@
+@page "/recomendaciones"
+
+<PageTitle>Motor de Recomendaciones - Duolingo</PageTitle>
+
+<div class="container mt-4 p-0">
+    <h1>Motor de Recomendaciones - Duolingo</h1>
+    <p class="lead">Sistema de recomendaciones basado en Neo4j</p>
+
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-upload"></i> Cargar Datos
+                    </h5>
+                    <p class="card-text">
+                        Carga datos en la base de datos Neo4j: usuarios, idiomas, unidades, habilidades, ejercicios y sus relaciones.
+                    </p>
+                    <a href="/cargar-datos" class="btn btn-primary">Ir a Cargar Datos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-search"></i> Consultar Recomendaciones
+                    </h5>
+                    <p class="card-text">
+                        Consulta recomendaciones basadas en diferentes criterios: dificultades del usuario, similitud de usuarios, contenido del curso, idioma estudiado y combinaciones.
+                    </p>
+                    <a href="/consultar-recomendaciones" class="btn btn-primary">Ir a Consultar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Tipos de Recomendaciones Disponibles</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>1. Basada en dificultades del usuario:</strong> Recomienda ejercicios para reforzar habilidades donde el usuario tiene más fallas.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>2. Basada en similitud de usuarios:</strong> Recomienda ejercicios que han sido útiles para usuarios con perfiles similares.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>3. Basada en contenido del curso:</strong> Recomienda ejercicios según la estructura y contenido del curso de un idioma.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>4. Basada en idioma estudiado:</strong> Recomienda ejercicios del idioma que el usuario está estudiando.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>5. Recomendación combinada:</strong> Combina múltiples criterios para ofrecer recomendaciones más precisas.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

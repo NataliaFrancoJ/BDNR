@@ -18,6 +18,38 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\natif\Desktop\BDNR\ObligatorioBDNR\ObligatorioBDNR
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/Pages/CargarDatos.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDYXJnYXJEYXRvcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/Pages/ConsultarRecomendaciones.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb25zdWx0YXJSZWNvbWVuZGFjaW9uZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/Pages/Recomendaciones.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWNvbWVuZGFjaW9uZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -26,12 +58,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/_ViewImports.cshtml]
@@ -41,7 +77,3 @@ build_metadata.AdditionalFiles.CssScope =
 [C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Shared/_Layout.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = b-zzy8n97brn

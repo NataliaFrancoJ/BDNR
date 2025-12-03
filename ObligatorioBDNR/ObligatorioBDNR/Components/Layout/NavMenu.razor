@@ -1,0 +1,39 @@
+<div class="top-row ps-3 navbar navbar-dark m-0 p-0" style="height: 3.5rem;">
+    <div class="container-fluid m-0 p-0">
+         <a class="navbar-brand text-white ps-0 ms-0" href="">Duolingo</a>
+    </div>
+</div>
+
+<div class="nav-scrollable overflow-auto" style="height: calc(100vh - 3.5rem);" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column p-0 m-0">
+        <div class="nav-item small pb-2 pt-3 ps-3 pe-0">
+            <NavLink class="nav-link text-white-50 d-flex align-items-center rounded-0 ps-0 pe-0" href="/inicio" Match="NavLinkMatch.All" ActiveClass="bg-white bg-opacity-25 text-white" style="height: 3rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                <span class="bi bi-house-door-fill me-2" aria-hidden="true"></span> Inicio
+            </NavLink>
+        </div>
+        <div class="nav-item small pb-2 ps-3 pe-0">
+            <NavLink class="nav-link text-white-50 d-flex align-items-center rounded-0 ps-0 pe-0" href="/recomendaciones" ActiveClass="bg-white bg-opacity-25 text-white" style="height: 3rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                <span class="bi bi-graph-up me-2" aria-hidden="true"></span> Motor de Recomendaciones
+            </NavLink>
+        </div>
+        <div class="nav-item small pb-2 ps-3 pe-0">
+            <NavLink class="nav-link text-white-50 d-flex align-items-center rounded-0 ps-0 pe-0" href="/cargar-datos" ActiveClass="bg-white bg-opacity-25 text-white" style="height: 3rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                <span class="bi bi-upload me-2" aria-hidden="true"></span> Cargar Datos
+            </NavLink>
+        </div>
+        <div class="nav-item small pb-2 ps-3 pe-0">
+            <NavLink class="nav-link text-white-50 d-flex align-items-center rounded-0 ps-0 pe-0" href="/consultar-recomendaciones" ActiveClass="bg-white bg-opacity-25 text-white" style="height: 3rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                <span class="bi bi-search me-2" aria-hidden="true"></span> Consultar Recomendaciones
+            </NavLink>
+        </div>
+        <div class="nav-item small pb-3 ps-3 pe-0">
+            <NavLink class="nav-link text-white-50 d-flex align-items-center rounded-0 ps-0 pe-0" href="/usuarios" ActiveClass="bg-white bg-opacity-25 text-white" style="height: 3rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                <span class="bi bi-people me-2" aria-hidden="true"></span> Gestión de Usuarios
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code {
+}
+
