@@ -6,17 +6,26 @@ namespace ObligatorioBDNR.Data.Neo4j;
 public class Neo4jContext : IDisposable
 {
     private readonly IDriver _driver;
+    private readonly string _database;
 
     public Neo4jContext(IConfiguration configuration)
     {
         var uri = configuration["Neo4j:Uri"] ?? "bolt://localhost:7687";
         var username = configuration["Neo4j:Username"] ?? "neo4j";
         var password = configuration["Neo4j:Password"] ?? "password";
+        _database = configuration["Neo4j:Database"] ?? "neo4j";
 
         _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(username, password));
     }
 
     public IDriver Driver => _driver;
+    
+    public string Database => _database;
+
+    public IAsyncSession GetSession()
+    {
+        return _driver.AsyncSession(o => o.WithDatabase(_database));
+    }
 
     public void Dispose()
     {

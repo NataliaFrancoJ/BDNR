@@ -30,7 +30,8 @@ public interface INeo4jRecomendacionService
     // Método para cargar datos de ejemplo
     Task CargarDatosEjemploAsync();
 
-    // Método de diagnóstico
+    // Métodos de diagnóstico
     Task<bool> VerificarDatosCargadosAsync();
+    Task<string> ObtenerDiagnosticoAsync(string usuarioId);
 }
 

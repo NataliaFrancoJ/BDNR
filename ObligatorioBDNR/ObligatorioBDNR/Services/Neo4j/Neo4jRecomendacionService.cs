@@ -17,7 +17,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearUsuarioAsync(Usuario usuario)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             "CREATE (u:Usuario {idUsuario: $idUsuario, username: $username})",
             new { idUsuario = usuario.IdUsuario, username = usuario.Username }
@@ -26,7 +26,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearIdiomaAsync(Idioma idioma)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             "CREATE (i:Idioma {idIdioma: $idIdioma, nombre: $nombre})",
             new { idIdioma = idioma.IdIdioma, nombre = idioma.Nombre }
@@ -35,7 +35,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearUnidadAsync(Unidad unidad)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             "CREATE (u:Unidad {idUnidad: $idUnidad, nombre: $nombre, posicion: $posicion, descripcion: $descripcion, nivel: $nivel})",
             new
@@ -51,7 +51,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearHabilidadAsync(Habilidad habilidad)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             "CREATE (h:Habilidad {idHabilidad: $idHabilidad, nombre: $nombre, descripcion: $descripcion, categoria: $categoria})",
             new
@@ -66,7 +66,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearEjercicioAsync(Ejercicio ejercicio)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             "CREATE (e:Ejercicio {idEjercicio: $idEjercicio, nombre: $nombre, descripcion: $descripcion, categoria: $categoria})",
             new
@@ -81,7 +81,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionEstudiaAsync(RelacionEstudia relacion)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (u:Usuario {idUsuario: $usuarioId}), (i:Idioma {idIdioma: $idiomaId})
               CREATE (u)-[:ESTUDIA {nivel: $nivel, fechaInicio: $fechaInicio, fechaUltimaActividad: $fechaUltimaActividad}]->(i)",
@@ -98,7 +98,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionDelIdiomaUnidadAsync(string unidadId, string idiomaId)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (u:Unidad {idUnidad: $unidadId}), (i:Idioma {idIdioma: $idiomaId})
               CREATE (u)-[:DEL_IDIOMA]->(i)",
@@ -108,7 +108,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionDelIdiomaHabilidadAsync(string habilidadId, string idiomaId)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (h:Habilidad {idHabilidad: $habilidadId}), (i:Idioma {idIdioma: $idiomaId})
               CREATE (h)-[:DEL_IDIOMA]->(i)",
@@ -118,7 +118,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionPerteneceAAsync(RelacionPerteneceA relacion)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (e:Ejercicio {idEjercicio: $ejercicioId}), (u:Unidad {idUnidad: $unidadId})
               CREATE (e)-[:PERTENECE_A {posicion: $posicion}]->(u)",
@@ -133,7 +133,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionRefuerzaAsync(string ejercicioId, string habilidadId)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (e:Ejercicio {idEjercicio: $ejercicioId}), (h:Habilidad {idHabilidad: $habilidadId})
               CREATE (e)-[:REFUERZA]->(h)",
@@ -143,7 +143,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionRealizaAsync(RelacionRealiza relacion)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (u:Usuario {idUsuario: $usuarioId}), (e:Ejercicio {idEjercicio: $ejercicioId})
               CREATE (u)-[:REALIZA {fechaRealizado: $fechaRealizado, resultado: $resultado, tiempo: $tiempo, intentos: $intentos}]->(e)",
@@ -161,7 +161,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionFallaEnAsync(RelacionFallaEn relacion)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (u:Usuario {idUsuario: $usuarioId}), (h:Habilidad {idHabilidad: $habilidadId})
               CREATE (u)-[:FALLA_EN {vecesFalladas: $vecesFalladas}]->(h)",
@@ -176,7 +176,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionSimilarAAsync(RelacionSimilarA relacion)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (u1:Usuario {idUsuario: $usuarioId1}), (u2:Usuario {idUsuario: $usuarioId2})
               CREATE (u1)-[:SIMILAR_A]->(u2)",
@@ -186,7 +186,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     public async Task CrearRelacionPrecedeAAsync(RelacionPrecedeA relacion)
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         await session.RunAsync(
             @"MATCH (u1:Unidad {idUnidad: $unidadId1}), (u2:Unidad {idUnidad: $unidadId2})
               CREATE (u1)-[:PRECEDE_A]->(u2)",
@@ -200,7 +200,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     private async Task CrearProyeccionUsuariosEjerciciosAsync()
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         
         // Verificar si la proyección ya existe
         var checkResult = await session.RunAsync("CALL gds.graph.exists('usuarios-ejercicios') YIELD exists RETURN exists");
@@ -246,7 +246,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     private async Task CrearProyeccionEjerciciosHabilidadesAsync()
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         
         // Verificar si la proyección ya existe
         var checkResult = await session.RunAsync("CALL gds.graph.exists('ejercicios-habilidades') YIELD exists RETURN exists");
@@ -298,7 +298,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     private async Task CrearProyeccionUsuariosHabilidadesAsync()
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         
         // Verificar si la proyección ya existe
         try
@@ -357,54 +357,47 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
     #region Métodos para consultar recomendaciones
 
-    // Patrón 1: Recomendación basada en las dificultades del usuario (usando GDS)
+    // Patrón 1: Recomendación basada en las dificultades del usuario
     public async Task<List<RecomendacionResultado>> ObtenerRecomendacionesPorDificultadesAsync(string usuarioId)
     {
         var resultados = new List<RecomendacionResultado>();
 
-        try
-        {
-            await using var session = _context.Driver.AsyncSession();
-            
-            // Consulta simplificada y más robusta
-            // Busca ejercicios que refuercen habilidades donde el usuario tiene dificultades
-            var result = await session.RunAsync(
-                @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma)
-                  MATCH (u)-[f:FALLA_EN]->(h:Habilidad)
-                  MATCH (h)-[:DEL_IDIOMA]->(idI)
-                  MATCH (e:Ejercicio)-[:REFUERZA]->(h)
-                  MATCH (e)-[:PERTENECE_A]->(un:Unidad)-[:DEL_IDIOMA]->(idI)
-                  RETURN DISTINCT e.idEjercicio AS ejercicio,
-                         e.nombre AS nombreEjercicio,
-                         h.nombre AS habilidad,
-                         f.vecesFalladas AS vecesFalladas,
-                         un.nombre AS unidad,
-                         idI.nombre AS idioma,
-                         (f.vecesFalladas * 2.0) AS score
-                  ORDER BY f.vecesFalladas DESC, e.idEjercicio
-                  LIMIT 20",
-                new { usuarioId }
-            );
+        await using var session = _context.GetSession();
+        
+        // Usar el mismo patrón que funciona en el diagnóstico
+        var cursor = await session.RunAsync(
+            @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma)
+              MATCH (u)-[f:FALLA_EN]->(h:Habilidad)
+              MATCH (h)-[:DEL_IDIOMA]->(idI)
+              MATCH (e:Ejercicio)-[:REFUERZA]->(h)
+              MATCH (e)-[:PERTENECE_A]->(un:Unidad)-[:DEL_IDIOMA]->(idI)
+              RETURN DISTINCT e.idEjercicio AS ejercicio,
+                     e.nombre AS nombreEjercicio,
+                     h.nombre AS habilidad,
+                     f.vecesFalladas AS vecesFalladas,
+                     un.nombre AS unidad,
+                     idI.nombre AS idioma,
+                     (f.vecesFalladas * 2.0) AS score
+              ORDER BY f.vecesFalladas DESC, e.idEjercicio
+              LIMIT 20",
+            new { usuarioId }
+        );
 
-            await foreach (var record in result)
-            {
-                resultados.Add(new RecomendacionResultado
-                {
-                    IdEjercicio = record["ejercicio"].As<string>() ?? string.Empty,
-                    NombreEjercicio = record["nombreEjercicio"].As<string>() ?? string.Empty,
-                    Habilidad = record["habilidad"].As<string>(),
-                    VecesFalladas = record["vecesFalladas"].As<int?>(),
-                    Unidad = record["unidad"].As<string>(),
-                    Idioma = record["idioma"].As<string>(),
-                    Score = record["score"].As<double?>(),
-                    TipoRecomendacion = "Basada en dificultades del usuario (GDS)"
-                });
-            }
-        }
-        catch (Exception ex)
+        var records = await cursor.ToListAsync();
+
+        foreach (var record in records)
         {
-            // Si hay un error, lanzar una excepción más descriptiva
-            throw new Exception($"Error al obtener recomendaciones por dificultades para usuario {usuarioId}: {ex.Message}", ex);
+            resultados.Add(new RecomendacionResultado
+            {
+                IdEjercicio = record["ejercicio"].As<string>() ?? string.Empty,
+                NombreEjercicio = record["nombreEjercicio"].As<string>() ?? string.Empty,
+                Habilidad = record["habilidad"].As<string>(),
+                VecesFalladas = record["vecesFalladas"].As<int?>(),
+                Unidad = record["unidad"].As<string>(),
+                Idioma = record["idioma"].As<string>(),
+                Score = record["score"].As<double?>(),
+                TipoRecomendacion = "Basada en dificultades del usuario"
+            });
         }
 
         return resultados;
@@ -415,7 +408,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     {
         var resultados = new List<RecomendacionResultado>();
 
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         
         // Asegurar que la proyección existe
         await CrearProyeccionUsuariosEjerciciosAsync();
@@ -527,7 +520,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     {
         var resultados = new List<RecomendacionResultado>();
 
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         
         // Asegurar que la proyección existe
         await CrearProyeccionEjerciciosHabilidadesAsync();
@@ -621,7 +614,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     {
         var resultados = new List<RecomendacionResultado>();
 
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         
         // Usar GDS para encontrar ejercicios importantes en el contexto del idioma
         await CrearProyeccionEjerciciosHabilidadesAsync();
@@ -714,7 +707,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     {
         var resultados = new List<RecomendacionResultado>();
 
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
         
         // Asegurar que las proyecciones existen
         await CrearProyeccionUsuariosEjerciciosAsync();
@@ -846,29 +839,24 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     {
         try
         {
-            await using var session = _context.Driver.AsyncSession();
+            await using var session = _context.GetSession();
             
-            var result = await session.RunAsync(@"
+            var cursor = await session.RunAsync(@"
                 MATCH (u:Usuario)
                 OPTIONAL MATCH (u)-[:ESTUDIA]->(i:Idioma)
-                OPTIONAL MATCH (u)-[:FALLA_EN]->(h:Habilidad)
                 OPTIONAL MATCH (e:Ejercicio)
                 RETURN count(DISTINCT u) AS usuarios,
                        count(DISTINCT i) AS idiomas,
-                       count(DISTINCT h) AS habilidades,
-                       count(DISTINCT e) AS ejercicios,
-                       count((u)-[:ESTUDIA]->()) AS relacionesEstudia,
-                       count((u)-[:FALLA_EN]->()) AS relacionesFallaEn"
+                       count(DISTINCT e) AS ejercicios"
             );
+            
+            var result = await cursor.SingleAsync();
 
-            var record = await result.SingleAsync();
-            var usuarios = record["usuarios"].As<int>();
-            var idiomas = record["idiomas"].As<int>();
-            var habilidades = record["habilidades"].As<int>();
-            var ejercicios = record["ejercicios"].As<int>();
-            var relacionesEstudia = record["relacionesEstudia"].As<int>();
+            var usuarios = result["usuarios"].As<int>();
+            var idiomas = result["idiomas"].As<int>();
+            var ejercicios = result["ejercicios"].As<int>();
 
-            return usuarios > 0 && idiomas > 0 && habilidades > 0 && ejercicios > 0 && relacionesEstudia > 0;
+            return usuarios > 0 && idiomas > 0 && ejercicios > 0;
         }
         catch (Exception ex)
         {
@@ -878,13 +866,112 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         }
     }
 
+    public async Task<string> ObtenerDiagnosticoAsync(string usuarioId)
+    {
+        var diagnostico = new System.Text.StringBuilder();
+        
+        try
+        {
+            await using var session = _context.GetSession();
+            
+            // 1. Verificar conexión y contar nodos
+            var conteo = await session.ExecuteReadAsync(async tx =>
+            {
+                var cursor = await tx.RunAsync(@"
+                    MATCH (u:Usuario) WITH count(u) AS usuarios
+                    MATCH (i:Idioma) WITH usuarios, count(i) AS idiomas
+                    MATCH (e:Ejercicio) WITH usuarios, idiomas, count(e) AS ejercicios
+                    MATCH (h:Habilidad) WITH usuarios, idiomas, ejercicios, count(h) AS habilidades
+                    RETURN usuarios, idiomas, ejercicios, habilidades"
+                );
+                return await cursor.SingleAsync();
+            });
+            
+            diagnostico.AppendLine($"✓ Conexión OK");
+            diagnostico.AppendLine($"  - Usuarios: {conteo["usuarios"].As<int>()}");
+            diagnostico.AppendLine($"  - Idiomas: {conteo["idiomas"].As<int>()}");
+            diagnostico.AppendLine($"  - Ejercicios: {conteo["ejercicios"].As<int>()}");
+            diagnostico.AppendLine($"  - Habilidades: {conteo["habilidades"].As<int>()}");
+
+            // 2. Verificar si existe el usuario
+            var usuarioExiste = await session.ExecuteReadAsync(async tx =>
+            {
+                var cursor = await tx.RunAsync(
+                    "MATCH (u:Usuario {idUsuario: $usuarioId}) RETURN u.username AS username",
+                    new { usuarioId }
+                );
+                return await cursor.ToListAsync();
+            });
+
+            if (usuarioExiste.Count == 0)
+            {
+                diagnostico.AppendLine($"✗ Usuario '{usuarioId}' NO existe");
+                return diagnostico.ToString();
+            }
+            diagnostico.AppendLine($"✓ Usuario '{usuarioId}' existe: {usuarioExiste[0]["username"].As<string>()}");
+
+            // 3. Verificar relaciones del usuario
+            var relaciones = await session.ExecuteReadAsync(async tx =>
+            {
+                var cursor = await tx.RunAsync(@"
+                    MATCH (u:Usuario {idUsuario: $usuarioId})
+                    OPTIONAL MATCH (u)-[:ESTUDIA]->(i:Idioma)
+                    OPTIONAL MATCH (u)-[:FALLA_EN]->(h:Habilidad)
+                    RETURN collect(DISTINCT i.idIdioma) AS idiomas, 
+                           collect(DISTINCT h.idHabilidad) AS habilidades",
+                    new { usuarioId }
+                );
+                return await cursor.SingleAsync();
+            });
+
+            var idiomasUsuario = relaciones["idiomas"].As<List<string>>();
+            var habilidadesUsuario = relaciones["habilidades"].As<List<string>>();
+            
+            diagnostico.AppendLine($"  - Idiomas que estudia: {string.Join(", ", idiomasUsuario.Where(x => x != null))}");
+            diagnostico.AppendLine($"  - Habilidades donde falla: {string.Join(", ", habilidadesUsuario.Where(x => x != null))}");
+
+            // 4. Ejecutar la query de recomendaciones y ver cuántos resultados hay
+            var recomendaciones = await session.ExecuteReadAsync(async tx =>
+            {
+                var cursor = await tx.RunAsync(@"
+                    MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma)
+                    MATCH (u)-[f:FALLA_EN]->(h:Habilidad)
+                    MATCH (h)-[:DEL_IDIOMA]->(idI)
+                    MATCH (e:Ejercicio)-[:REFUERZA]->(h)
+                    MATCH (e)-[:PERTENECE_A]->(un:Unidad)-[:DEL_IDIOMA]->(idI)
+                    RETURN count(DISTINCT e) AS total",
+                    new { usuarioId }
+                );
+                return await cursor.SingleAsync();
+            });
+
+            var totalRecomendaciones = recomendaciones["total"].As<int>();
+            diagnostico.AppendLine($"  - Ejercicios recomendables: {totalRecomendaciones}");
+
+            if (totalRecomendaciones == 0)
+            {
+                diagnostico.AppendLine("✗ No hay ejercicios que cumplan todos los criterios");
+            }
+            else
+            {
+                diagnostico.AppendLine("✓ Hay ejercicios disponibles para recomendar");
+            }
+        }
+        catch (Exception ex)
+        {
+            diagnostico.AppendLine($"✗ Error: {ex.Message}");
+        }
+
+        return diagnostico.ToString();
+    }
+
     #endregion
 
     #region Método para cargar datos de ejemplo
 
     public async Task CargarDatosEjemploAsync()
     {
-        await using var session = _context.Driver.AsyncSession();
+        await using var session = _context.GetSession();
 
         await session.RunAsync("MATCH (n) DETACH DELETE n");
 
