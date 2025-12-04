@@ -41,7 +41,6 @@
             </ul>
 
             <div class="tab-content mt-3" id="myTabContent">
-                <!-- Usuario -->
                 <div class="tab-pane fade show active" id="usuario" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
@@ -59,7 +58,7 @@
                     </div>
                 </div>
 
-                <!-- Idioma -->
+                
                 <div class="tab-pane fade" id="idioma" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
@@ -77,7 +76,7 @@
                     </div>
                 </div>
 
-                <!-- Unidad -->
+                
                 <div class="tab-pane fade" id="unidad" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
@@ -107,7 +106,7 @@
                     </div>
                 </div>
 
-                <!-- Habilidad -->
+              
                 <div class="tab-pane fade" id="habilidad" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
@@ -133,7 +132,7 @@
                     </div>
                 </div>
 
-                <!-- Ejercicio -->
+                
                 <div class="tab-pane fade" id="ejercicio" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
@@ -159,7 +158,7 @@
                     </div>
                 </div>
 
-                <!-- Relaciones -->
+                
                 <div class="tab-pane fade" id="relaciones" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
@@ -360,6 +359,11 @@
 
     private async Task CrearUsuario()
     {
+        if (string.IsNullOrWhiteSpace(nuevoUsuario.IdUsuario) || string.IsNullOrWhiteSpace(nuevoUsuario.Username))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios ( Usuario y Username)", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearUsuarioAsync(nuevoUsuario);
@@ -374,6 +378,11 @@
 
     private async Task CrearIdioma()
     {
+        if (string.IsNullOrWhiteSpace(nuevoIdioma.IdIdioma) || string.IsNullOrWhiteSpace(nuevoIdioma.Nombre))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios (Idioma y Nombre)", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearIdiomaAsync(nuevoIdioma);
@@ -388,6 +397,11 @@
 
     private async Task CrearUnidad()
     {
+        if (string.IsNullOrWhiteSpace(nuevaUnidad.IdUnidad) || string.IsNullOrWhiteSpace(nuevaUnidad.Nombre))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios (Unidad y Nombre)", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearUnidadAsync(nuevaUnidad);
@@ -402,6 +416,11 @@
 
     private async Task CrearHabilidad()
     {
+        if (string.IsNullOrWhiteSpace(nuevaHabilidad.IdHabilidad) || string.IsNullOrWhiteSpace(nuevaHabilidad.Nombre))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios ( Habilidad y Nombre)", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearHabilidadAsync(nuevaHabilidad);
@@ -416,6 +435,11 @@
 
     private async Task CrearEjercicio()
     {
+        if (string.IsNullOrWhiteSpace(nuevoEjercicio.IdEjercicio) || string.IsNullOrWhiteSpace(nuevoEjercicio.Nombre))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios ( Ejercicio y Nombre)", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearEjercicioAsync(nuevoEjercicio);
@@ -430,11 +454,16 @@
 
     private async Task CrearRelacionEstudia()
     {
+        if (string.IsNullOrWhiteSpace(relEstudia.UsuarioId) || string.IsNullOrWhiteSpace(relEstudia.IdiomaId))
+        {
+            await MostrarMensaje("Por favor, completa Usuario e Idioma ", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionEstudiaAsync(relEstudia);
             relEstudia = new() { FechaInicio = DateTime.Now, FechaUltimaActividad = DateTime.Now };
-            await MostrarMensaje("Relación ESTUDIA creada exitosamente", true);
+            await MostrarMensaje("Relación estudia creada exitosamente", true);
         }
         catch (Exception ex)
         {
@@ -444,11 +473,16 @@
 
     private async Task CrearRelacionUnidadIdioma()
     {
+        if (string.IsNullOrWhiteSpace(unidadIdioma.UnidadId) || string.IsNullOrWhiteSpace(unidadIdioma.IdiomaId))
+        {
+            await MostrarMensaje("Por favor, completa Unidad e Idioma ", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionDelIdiomaUnidadAsync(unidadIdioma.UnidadId, unidadIdioma.IdiomaId);
             unidadIdioma = ("", "");
-            await MostrarMensaje("Relación DEL_IDIOMA (Unidad) creada exitosamente", true);
+            await MostrarMensaje("Relación del idioma (Unidad) creada exitosamente", true);
         }
         catch (Exception ex)
         {
@@ -458,11 +492,16 @@
 
     private async Task CrearRelacionHabilidadIdioma()
     {
+        if (string.IsNullOrWhiteSpace(habilidadIdioma.HabilidadId) || string.IsNullOrWhiteSpace(habilidadIdioma.IdiomaId))
+        {
+            await MostrarMensaje("Por favor, completa Habilidad e Idioma ", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionDelIdiomaHabilidadAsync(habilidadIdioma.HabilidadId, habilidadIdioma.IdiomaId);
             habilidadIdioma = ("", "");
-            await MostrarMensaje("Relación DEL_IDIOMA (Habilidad) creada exitosamente", true);
+            await MostrarMensaje("Relación del idioma (Habilidad) creada exitosamente", true);
         }
         catch (Exception ex)
         {
@@ -472,11 +511,16 @@
 
     private async Task CrearRelacionPerteneceA()
     {
+        if (string.IsNullOrWhiteSpace(relPerteneceA.EjercicioId) || string.IsNullOrWhiteSpace(relPerteneceA.UnidadId))
+        {
+            await MostrarMensaje("Por favor, completa Ejercicio y Unidad ", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionPerteneceAAsync(relPerteneceA);
             relPerteneceA = new();
-            await MostrarMensaje("Relación PERTENECE_A creada exitosamente", true);
+            await MostrarMensaje("Relación pertenece a creada exitosamente", true);
         }
         catch (Exception ex)
         {
@@ -486,11 +530,16 @@
 
     private async Task CrearRelacionRefuerza()
     {
+        if (string.IsNullOrWhiteSpace(ejercicioRefuerza.EjercicioId) || string.IsNullOrWhiteSpace(ejercicioRefuerza.HabilidadId))
+        {
+            await MostrarMensaje("Por favor, completa Ejercicio y Habilidad ", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionRefuerzaAsync(ejercicioRefuerza.EjercicioId, ejercicioRefuerza.HabilidadId);
             ejercicioRefuerza = ("", "");
-            await MostrarMensaje("Relación REFUERZA creada exitosamente", true);
+            await MostrarMensaje("Relación refuerza creada exitosamente", true);
         }
         catch (Exception ex)
         {
@@ -500,11 +549,16 @@
 
     private async Task CrearRelacionRealiza()
     {
+        if (string.IsNullOrWhiteSpace(relRealiza.UsuarioId) || string.IsNullOrWhiteSpace(relRealiza.EjercicioId))
+        {
+            await MostrarMensaje("Por favor, completa Usuario  y Ejercicio ", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionRealizaAsync(relRealiza);
             relRealiza = new() { FechaRealizado = DateTime.Now };
-            await MostrarMensaje("Relación REALIZA creada exitosamente", true);
+            await MostrarMensaje("Relación realiza creada exitosamente", true);
         }
         catch (Exception ex)
         {
@@ -514,11 +568,16 @@
 
     private async Task CrearRelacionFallaEn()
     {
+        if (string.IsNullOrWhiteSpace(relFallaEn.UsuarioId) || string.IsNullOrWhiteSpace(relFallaEn.HabilidadId))
+        {
+            await MostrarMensaje("Por favor, completa Usuario  y Habilidad ", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionFallaEnAsync(relFallaEn);
             relFallaEn = new();
-            await MostrarMensaje("Relación FALLA_EN creada exitosamente", true);
+            await MostrarMensaje("Relación falla en creada exitosamente", true);
         }
         catch (Exception ex)
         {
@@ -528,11 +587,16 @@
 
     private async Task CrearRelacionSimilarA()
     {
+        if (string.IsNullOrWhiteSpace(relSimilarA.UsuarioId1) || string.IsNullOrWhiteSpace(relSimilarA.UsuarioId2))
+        {
+            await MostrarMensaje("Por favor, completa Usuario 1 y Usuario 2", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionSimilarAAsync(relSimilarA);
             relSimilarA = new();
-            await MostrarMensaje("Relación SIMILAR_A creada exitosamente", true);
+            await MostrarMensaje("Relación similar a creada exitosamente", true);
         }
         catch (Exception ex)
         {
@@ -542,11 +606,16 @@
 
     private async Task CrearRelacionPrecedeA()
     {
+        if (string.IsNullOrWhiteSpace(relPrecedeA.UnidadId1) || string.IsNullOrWhiteSpace(relPrecedeA.UnidadId2))
+        {
+            await MostrarMensaje("Por favor, completa Unidad  1 y Unidad  2", false);
+            return;
+        }
         try
         {
             await RecomendacionService.CrearRelacionPrecedeAAsync(relPrecedeA);
             relPrecedeA = new();
-            await MostrarMensaje("Relación PRECEDE_A creada exitosamente", true);
+            await MostrarMensaje("Relación  creada exitosamente", true);
         }
         catch (Exception ex)
         {
