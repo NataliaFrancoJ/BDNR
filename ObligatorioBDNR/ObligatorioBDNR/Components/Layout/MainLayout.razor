@@ -1,0 +1,15 @@
+@inherits LayoutComponentBase
+
+<div class="d-flex flex-column flex-md-row m-0 p-0 w-100 vh-100">
+    <div class="bg-primary bg-gradient m-0 p-0 position-md-sticky top-md-0" 
+    style="background: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%) !important; width: 250px; min-width: 250px;">
+        <NavMenu/>
+    </div>
+
+    <main class="flex-grow-1 m-0 p-0 d-flex flex-column">
+        <article class="px-4 py-3 flex-grow-1">
+            @Body
+        </article>
+    </main>
+</div>
+

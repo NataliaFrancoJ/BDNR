@@ -1,0 +1,672 @@
+@page "/cargar-datos"
+@using ObligatorioBDNR.Models.Recomendacion
+@using ObligatorioBDNR.Services.Neo4j
+@inject INeo4jRecomendacionService RecomendacionService
+
+<PageTitle>Cargar Datos - Motor de Recomendaciones</PageTitle>
+
+<div class="container mt-4 p-0">
+    <h1>Cargar Datos en Neo4j</h1>
+    <p class="text-muted">Crea nodos y relaciones en la base de datos Neo4j</p>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <div class="alert @(esExito ? "alert-success" : "alert-danger") alert-dismissible fade show" role="alert">
+            @mensaje
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="usuario-tab" data-bs-toggle="tab" data-bs-target="#usuario" type="button" role="tab">Usuario</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="idioma-tab" data-bs-toggle="tab" data-bs-target="#idioma" type="button" role="tab">Idioma</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="unidad-tab" data-bs-toggle="tab" data-bs-target="#unidad" type="button" role="tab">Unidad</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="habilidad-tab" data-bs-toggle="tab" data-bs-target="#habilidad" type="button" role="tab">Habilidad</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ejercicio-tab" data-bs-toggle="tab" data-bs-target="#ejercicio" type="button" role="tab">Ejercicio</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="relaciones-tab" data-bs-toggle="tab" data-bs-target="#relaciones" type="button" role="tab">Relaciones</button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3" id="myTabContent">
+                <div class="tab-pane fade show active" id="usuario" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Crear Usuario</h5>
+                            <div class="mb-3">
+                                <label class="form-label">ID Usuario</label>
+                                <input type="text" class="form-control" @bind="nuevoUsuario.IdUsuario" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" @bind="nuevoUsuario.Username" />
+                            </div>
+                            <button class="btn btn-primary" @onclick="CrearUsuario">Crear Usuario</button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="tab-pane fade" id="idioma" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Crear Idioma</h5>
+                            <div class="mb-3">
+                                <label class="form-label">ID Idioma</label>
+                                <input type="text" class="form-control" @bind="nuevoIdioma.IdIdioma" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" @bind="nuevoIdioma.Nombre" />
+                            </div>
+                            <button class="btn btn-primary" @onclick="CrearIdioma">Crear Idioma</button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="tab-pane fade" id="unidad" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Crear Unidad</h5>
+                            <div class="mb-3">
+                                <label class="form-label">ID Unidad</label>
+                                <input type="text" class="form-control" @bind="nuevaUnidad.IdUnidad" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" @bind="nuevaUnidad.Nombre" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Posición</label>
+                                <input type="number" class="form-control" @bind="nuevaUnidad.Posicion" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <input type="text" class="form-control" @bind="nuevaUnidad.Descripcion" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nivel</label>
+                                <input type="text" class="form-control" @bind="nuevaUnidad.Nivel" />
+                            </div>
+                            <button class="btn btn-primary" @onclick="CrearUnidad">Crear Unidad</button>
+                        </div>
+                    </div>
+                </div>
+
+              
+                <div class="tab-pane fade" id="habilidad" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Crear Habilidad</h5>
+                            <div class="mb-3">
+                                <label class="form-label">ID Habilidad</label>
+                                <input type="text" class="form-control" @bind="nuevaHabilidad.IdHabilidad" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" @bind="nuevaHabilidad.Nombre" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <input type="text" class="form-control" @bind="nuevaHabilidad.Descripcion" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Categoría</label>
+                                <input type="text" class="form-control" @bind="nuevaHabilidad.Categoria" />
+                            </div>
+                            <button class="btn btn-primary" @onclick="CrearHabilidad">Crear Habilidad</button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="tab-pane fade" id="ejercicio" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Crear Ejercicio</h5>
+                            <div class="mb-3">
+                                <label class="form-label">ID Ejercicio</label>
+                                <input type="text" class="form-control" @bind="nuevoEjercicio.IdEjercicio" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" @bind="nuevoEjercicio.Nombre" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <input type="text" class="form-control" @bind="nuevoEjercicio.Descripcion" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Categoría</label>
+                                <input type="text" class="form-control" @bind="nuevoEjercicio.Categoria" />
+                            </div>
+                            <button class="btn btn-primary" @onclick="CrearEjercicio">Crear Ejercicio</button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="tab-pane fade" id="relaciones" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Crear Relación</h5>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Seleccionar Tipo de Relación</label>
+                                <select class="form-select" @bind="tipoRelacionSeleccionada" @bind:after="LimpiarFormularioRelacion">
+                                    <option value="">-- Seleccione una relación --</option>
+                                    <option value="ESTUDIA">Usuario ESTUDIA Idioma</option>
+                                    <option value="DEL_IDIOMA_UNIDAD">Unidad DEL_IDIOMA Idioma</option>
+                                    <option value="DEL_IDIOMA_HABILIDAD">Habilidad DEL_IDIOMA Idioma</option>
+                                    <option value="PERTENECE_A">Ejercicio PERTENECE_A Unidad</option>
+                                    <option value="REFUERZA">Ejercicio REFUERZA Habilidad</option>
+                                    <option value="REALIZA">Usuario REALIZA Ejercicio</option>
+                                    <option value="FALLA_EN">Usuario FALLA_EN Habilidad</option>
+                                    <option value="SIMILAR_A">Usuario SIMILAR_A Usuario</option>
+                                    <option value="PRECEDE_A">Unidad PRECEDE_A Unidad</option>
+                                </select>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(tipoRelacionSeleccionada))
+                            {
+                                <div class="card border-primary">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">@GetNombreRelacion(tipoRelacionSeleccionada)</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        @if (tipoRelacionSeleccionada == "ESTUDIA")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Usuario ID</label>
+                                                <input type="text" class="form-control" @bind="relEstudia.UsuarioId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Idioma ID</label>
+                                                <input type="text" class="form-control" @bind="relEstudia.IdiomaId" />
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Nivel</label>
+                                                    <input type="text" class="form-control" @bind="relEstudia.Nivel" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Fecha Inicio</label>
+                                                    <input type="date" class="form-control" @bind="relEstudia.FechaInicio" />
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionEstudia">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "DEL_IDIOMA_UNIDAD")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Unidad ID</label>
+                                                <input type="text" class="form-control" @bind="unidadIdioma.UnidadId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Idioma ID</label>
+                                                <input type="text" class="form-control" @bind="unidadIdioma.IdiomaId" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionUnidadIdioma">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "DEL_IDIOMA_HABILIDAD")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Habilidad ID</label>
+                                                <input type="text" class="form-control" @bind="habilidadIdioma.HabilidadId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Idioma ID</label>
+                                                <input type="text" class="form-control" @bind="habilidadIdioma.IdiomaId" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionHabilidadIdioma">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "PERTENECE_A")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Ejercicio ID</label>
+                                                <input type="text" class="form-control" @bind="relPerteneceA.EjercicioId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Unidad ID</label>
+                                                <input type="text" class="form-control" @bind="relPerteneceA.UnidadId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Posición</label>
+                                                <input type="number" class="form-control" @bind="relPerteneceA.Posicion" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionPerteneceA">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "REFUERZA")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Ejercicio ID</label>
+                                                <input type="text" class="form-control" @bind="ejercicioRefuerza.EjercicioId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Habilidad ID</label>
+                                                <input type="text" class="form-control" @bind="ejercicioRefuerza.HabilidadId" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionRefuerza">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "REALIZA")
+                                        {
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Usuario ID</label>
+                                                    <input type="text" class="form-control" @bind="relRealiza.UsuarioId" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Ejercicio ID</label>
+                                                    <input type="text" class="form-control" @bind="relRealiza.EjercicioId" />
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Fecha Realizado</label>
+                                                <input type="datetime-local" class="form-control" @bind="relRealiza.FechaRealizado" />
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Resultado</label>
+                                                    <input type="text" class="form-control" @bind="relRealiza.Resultado" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Tiempo</label>
+                                                    <input type="number" class="form-control" @bind="relRealiza.Tiempo" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Intentos</label>
+                                                    <input type="number" class="form-control" @bind="relRealiza.Intentos" />
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionRealiza">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "FALLA_EN")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Usuario ID</label>
+                                                <input type="text" class="form-control" @bind="relFallaEn.UsuarioId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Habilidad ID</label>
+                                                <input type="text" class="form-control" @bind="relFallaEn.HabilidadId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Veces Falladas</label>
+                                                <input type="number" class="form-control" @bind="relFallaEn.VecesFalladas" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionFallaEn">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "SIMILAR_A")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Usuario ID 1</label>
+                                                <input type="text" class="form-control" @bind="relSimilarA.UsuarioId1" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Usuario ID 2</label>
+                                                <input type="text" class="form-control" @bind="relSimilarA.UsuarioId2" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionSimilarA">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "PRECEDE_A")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Unidad ID 1</label>
+                                                <input type="text" class="form-control" @bind="relPrecedeA.UnidadId1" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Unidad ID 2</label>
+                                                <input type="text" class="form-control" @bind="relPrecedeA.UnidadId2" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionPrecedeA">Crear Relación</button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string mensaje = string.Empty;
+    private bool esExito = false;
+
+    private Usuario nuevoUsuario = new();
+    private Idioma nuevoIdioma = new();
+    private Unidad nuevaUnidad = new();
+    private Habilidad nuevaHabilidad = new();
+    private Ejercicio nuevoEjercicio = new();
+   
+    private string tipoRelacionSeleccionada = string.Empty;
+    
+    private RelacionEstudia relEstudia = new() { FechaInicio = DateTime.Now, FechaUltimaActividad = DateTime.Now };
+    private (string UnidadId, string IdiomaId) unidadIdioma = ("", "");
+    private (string HabilidadId, string IdiomaId) habilidadIdioma = ("", "");
+    private RelacionPerteneceA relPerteneceA = new();
+    private (string EjercicioId, string HabilidadId) ejercicioRefuerza = ("", "");
+    private RelacionRealiza relRealiza = new() { FechaRealizado = DateTime.Now };
+    private RelacionFallaEn relFallaEn = new();
+    private RelacionSimilarA relSimilarA = new();
+    private RelacionPrecedeA relPrecedeA = new();
+
+    private void LimpiarFormularioRelacion()
+    {
+        relEstudia = new() { FechaInicio = DateTime.Now, FechaUltimaActividad = DateTime.Now };
+        unidadIdioma = ("", "");
+        habilidadIdioma = ("", "");
+        relPerteneceA = new();
+        ejercicioRefuerza = ("", "");
+        relRealiza = new() { FechaRealizado = DateTime.Now };
+        relFallaEn = new();
+        relSimilarA = new();
+        relPrecedeA = new();
+    }
+
+    private string GetNombreRelacion(string tipo)
+    {
+        return tipo switch
+        {
+            "ESTUDIA" => "Usuario ESTUDIA Idioma",
+            "DEL_IDIOMA_UNIDAD" => "Unidad DEL_IDIOMA Idioma",
+            "DEL_IDIOMA_HABILIDAD" => "Habilidad DEL_IDIOMA Idioma",
+            "PERTENECE_A" => "Ejercicio PERTENECE_A Unidad",
+            "REFUERZA" => "Ejercicio REFUERZA Habilidad",
+            "REALIZA" => "Usuario REALIZA Ejercicio",
+            "FALLA_EN" => "Usuario FALLA_EN Habilidad",
+            "SIMILAR_A" => "Usuario SIMILAR_A Usuario",
+            "PRECEDE_A" => "Unidad PRECEDE_A Unidad",
+            _ => "Relación"
+        };
+    }
+
+    private async Task MostrarMensaje(string msg, bool exito)
+    {
+        mensaje = msg;
+        esExito = exito;
+        await Task.Delay(100);
+    }
+
+    private async Task CrearUsuario()
+    {
+        if (string.IsNullOrWhiteSpace(nuevoUsuario.IdUsuario) || string.IsNullOrWhiteSpace(nuevoUsuario.Username))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios ( Usuario y Username)", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearUsuarioAsync(nuevoUsuario);
+            nuevoUsuario = new();
+            await MostrarMensaje("Usuario creado exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearIdioma()
+    {
+        if (string.IsNullOrWhiteSpace(nuevoIdioma.IdIdioma) || string.IsNullOrWhiteSpace(nuevoIdioma.Nombre))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios (Idioma y Nombre)", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearIdiomaAsync(nuevoIdioma);
+            nuevoIdioma = new();
+            await MostrarMensaje("Idioma creado exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearUnidad()
+    {
+        if (string.IsNullOrWhiteSpace(nuevaUnidad.IdUnidad) || string.IsNullOrWhiteSpace(nuevaUnidad.Nombre))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios (Unidad y Nombre)", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearUnidadAsync(nuevaUnidad);
+            nuevaUnidad = new();
+            await MostrarMensaje("Unidad creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearHabilidad()
+    {
+        if (string.IsNullOrWhiteSpace(nuevaHabilidad.IdHabilidad) || string.IsNullOrWhiteSpace(nuevaHabilidad.Nombre))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios ( Habilidad y Nombre)", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearHabilidadAsync(nuevaHabilidad);
+            nuevaHabilidad = new();
+            await MostrarMensaje("Habilidad creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearEjercicio()
+    {
+        if (string.IsNullOrWhiteSpace(nuevoEjercicio.IdEjercicio) || string.IsNullOrWhiteSpace(nuevoEjercicio.Nombre))
+        {
+            await MostrarMensaje("Por favor, completa todos los campos obligatorios ( Ejercicio y Nombre)", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearEjercicioAsync(nuevoEjercicio);
+            nuevoEjercicio = new();
+            await MostrarMensaje("Ejercicio creado exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionEstudia()
+    {
+        if (string.IsNullOrWhiteSpace(relEstudia.UsuarioId) || string.IsNullOrWhiteSpace(relEstudia.IdiomaId))
+        {
+            await MostrarMensaje("Por favor, completa Usuario e Idioma ", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionEstudiaAsync(relEstudia);
+            relEstudia = new() { FechaInicio = DateTime.Now, FechaUltimaActividad = DateTime.Now };
+            await MostrarMensaje("Relación estudia creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionUnidadIdioma()
+    {
+        if (string.IsNullOrWhiteSpace(unidadIdioma.UnidadId) || string.IsNullOrWhiteSpace(unidadIdioma.IdiomaId))
+        {
+            await MostrarMensaje("Por favor, completa Unidad e Idioma ", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionDelIdiomaUnidadAsync(unidadIdioma.UnidadId, unidadIdioma.IdiomaId);
+            unidadIdioma = ("", "");
+            await MostrarMensaje("Relación del idioma (Unidad) creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionHabilidadIdioma()
+    {
+        if (string.IsNullOrWhiteSpace(habilidadIdioma.HabilidadId) || string.IsNullOrWhiteSpace(habilidadIdioma.IdiomaId))
+        {
+            await MostrarMensaje("Por favor, completa Habilidad e Idioma ", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionDelIdiomaHabilidadAsync(habilidadIdioma.HabilidadId, habilidadIdioma.IdiomaId);
+            habilidadIdioma = ("", "");
+            await MostrarMensaje("Relación del idioma (Habilidad) creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionPerteneceA()
+    {
+        if (string.IsNullOrWhiteSpace(relPerteneceA.EjercicioId) || string.IsNullOrWhiteSpace(relPerteneceA.UnidadId))
+        {
+            await MostrarMensaje("Por favor, completa Ejercicio y Unidad ", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionPerteneceAAsync(relPerteneceA);
+            relPerteneceA = new();
+            await MostrarMensaje("Relación pertenece a creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionRefuerza()
+    {
+        if (string.IsNullOrWhiteSpace(ejercicioRefuerza.EjercicioId) || string.IsNullOrWhiteSpace(ejercicioRefuerza.HabilidadId))
+        {
+            await MostrarMensaje("Por favor, completa Ejercicio y Habilidad ", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionRefuerzaAsync(ejercicioRefuerza.EjercicioId, ejercicioRefuerza.HabilidadId);
+            ejercicioRefuerza = ("", "");
+            await MostrarMensaje("Relación refuerza creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionRealiza()
+    {
+        if (string.IsNullOrWhiteSpace(relRealiza.UsuarioId) || string.IsNullOrWhiteSpace(relRealiza.EjercicioId))
+        {
+            await MostrarMensaje("Por favor, completa Usuario  y Ejercicio ", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionRealizaAsync(relRealiza);
+            relRealiza = new() { FechaRealizado = DateTime.Now };
+            await MostrarMensaje("Relación realiza creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionFallaEn()
+    {
+        if (string.IsNullOrWhiteSpace(relFallaEn.UsuarioId) || string.IsNullOrWhiteSpace(relFallaEn.HabilidadId))
+        {
+            await MostrarMensaje("Por favor, completa Usuario  y Habilidad ", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionFallaEnAsync(relFallaEn);
+            relFallaEn = new();
+            await MostrarMensaje("Relación falla en creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionSimilarA()
+    {
+        if (string.IsNullOrWhiteSpace(relSimilarA.UsuarioId1) || string.IsNullOrWhiteSpace(relSimilarA.UsuarioId2))
+        {
+            await MostrarMensaje("Por favor, completa Usuario 1 y Usuario 2", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionSimilarAAsync(relSimilarA);
+            relSimilarA = new();
+            await MostrarMensaje("Relación similar a creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+
+    private async Task CrearRelacionPrecedeA()
+    {
+        if (string.IsNullOrWhiteSpace(relPrecedeA.UnidadId1) || string.IsNullOrWhiteSpace(relPrecedeA.UnidadId2))
+        {
+            await MostrarMensaje("Por favor, completa Unidad  1 y Unidad  2", false);
+            return;
+        }
+        try
+        {
+            await RecomendacionService.CrearRelacionPrecedeAAsync(relPrecedeA);
+            relPrecedeA = new();
+            await MostrarMensaje("Relación  creada exitosamente", true);
+        }
+        catch (Exception ex)
+        {
+            await MostrarMensaje($"Error: {ex.Message}", false);
+        }
+    }
+}
+

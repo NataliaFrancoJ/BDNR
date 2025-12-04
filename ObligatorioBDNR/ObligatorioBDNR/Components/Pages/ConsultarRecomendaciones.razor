@@ -1,0 +1,246 @@
+@page "/consultar-recomendaciones"
+@using ObligatorioBDNR.Models.Recomendacion
+@using ObligatorioBDNR.Services.Neo4j
+@inject INeo4jRecomendacionService RecomendacionService
+
+<PageTitle>Consultar Recomendaciones - Motor de Recomendaciones</PageTitle>
+
+<div class="container mt-4 p-0">
+    <h1>Consultar Recomendaciones</h1>
+    <p class="text-muted">Consulta recomendaciones basadas en diferentes criterios</p>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <div class="alert @(esExito ? "alert-success" : "alert-warning") alert-dismissible fade show mb-3" role="alert">
+            <strong>@mensaje</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="() => { mensaje = string.Empty; StateHasChanged(); }"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Seleccionar Tipo de Recomendación</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">ID Usuario</label>
+                        <input type="text" class="form-control" @bind="usuarioId" placeholder="Ej: u1" />
+                        <small class="form-text text-muted">Ingresa el ID del usuario para el cual se generarán las recomendaciones.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="tipoRecomendacion">Tipo de Recomendación</label>
+                        <select id="tipoRecomendacion" class="form-select" @bind="tipoRecomendacion" @bind:after="LimpiarResultados">
+                            <option value="1">1. Basada en dificultades del usuario</option>
+                            <option value="2">2. Basada en similitud de usuarios</option>
+                            <option value="3">3. Basada en contenido y estructura del curso</option>
+                            <option value="4">4. Basada en idioma estudiado</option>
+                            <option value="5">5. Recomendación combinada (múltiples criterios)</option>
+                        </select>
+                    </div>
+
+                    @if (tipoRecomendacion == "3" || tipoRecomendacion == "4" || tipoRecomendacion == "5")
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">ID Idioma (Opcional)</label>
+                            <input type="text" class="form-control" @bind="idiomaId" placeholder="Ej: en (dejar vacío para todos los idiomas)" />
+                            <small class="form-text text-muted">
+                                @if (tipoRecomendacion == "3")
+                                {
+                                    <text>Filtra por idioma específico. Si está vacío, se consideran todos los idiomas que estudia el usuario.</text>
+                                }
+                                else if (tipoRecomendacion == "4")
+                                {
+                                    <text>Filtra por idioma específico. Si está vacío, se muestran ejercicios de todos los idiomas que estudia el usuario.</text>
+                                }
+                                else
+                                {
+                                    <text>Filtra por idioma específico para la recomendación combinada. Si está vacío, se consideran todos los idiomas.</text>
+                                }
+                            </small>
+                        </div>
+                    }
+
+                    <div class="alert alert-info">
+                        <strong>@GetTipoRecomendacionDescripcion()</strong>
+                    </div>
+
+                    <button class="btn btn-primary" @onclick="OnConsultarRecomendaciones" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        }
+                        Consultar
+                    </button>
+                </div>
+            </div>
+
+            @if (consultaRealizada && resultados.Any())
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Resultados (@resultados.Count recomendaciones)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID Ejercicio</th>
+                                        <th>Nombre Ejercicio</th>
+                                        <th>Habilidad</th>
+                                        <th>Unidad</th>
+                                        <th>Idioma</th>
+                                        <th>Veces Falladas</th>
+                                        <th>Score</th>
+                                        <th>Tipo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var resultado in resultados)
+                                    {
+                                        <tr>
+                                            <td>@resultado.IdEjercicio</td>
+                                            <td>@resultado.NombreEjercicio</td>
+                                            <td>@(resultado.Habilidad ?? "-")</td>
+                                            <td>@(resultado.Unidad ?? "-")</td>
+                                            <td>@(resultado.Idioma ?? "-")</td>
+                                            <td>@(resultado.VecesFalladas?.ToString() ?? "-")</td>
+                                            <td>@(resultado.Score?.ToString("F2") ?? "-")</td>
+                                            <td><span class="badge bg-info">@(resultado.TipoRecomendacion ?? "-")</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (consultaRealizada && !resultados.Any())
+            {
+                <div class="alert alert-warning">
+                    <strong>No se encontraron recomendaciones</strong> con los criterios especificados.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string tipoRecomendacion = "1";
+    private string usuarioId = string.Empty;
+    private string idiomaId = string.Empty;
+    private List<RecomendacionResultado> resultados = new();
+    private bool isLoading = false;
+    private bool consultaRealizada = false;
+    private string mensaje = string.Empty;
+    private bool esExito = false;
+
+    private void LimpiarResultados()
+    {
+        resultados.Clear();
+        consultaRealizada = false;
+        mensaje = string.Empty;
+    }
+
+    private async Task OnConsultarRecomendaciones()
+    {
+        try
+        {
+            isLoading = true;
+            consultaRealizada = false;
+            resultados.Clear();
+            mensaje = string.Empty;
+            esExito = false;
+            StateHasChanged();
+
+            if (string.IsNullOrWhiteSpace(usuarioId))
+            {
+                mensaje = "Por favor, ingresa un ID de usuario válido";
+                esExito = false;
+                consultaRealizada = false;
+                isLoading = false;
+                StateHasChanged();
+                return;
+            }
+
+            mensaje = "Verificando datos...";
+            StateHasChanged();
+            
+            var datosCargados = await RecomendacionService.VerificarDatosCargadosAsync();
+            if (!datosCargados)
+            {
+                mensaje = "Los datos de ejemplo no están cargados. Por favor, reinicia la aplicación para que se carguen automáticamente, o verifica que Neo4j esté ejecutándose correctamente.";
+                esExito = false;
+                consultaRealizada = true;
+                isLoading = false;
+                StateHasChanged();
+                return;
+            }
+
+            mensaje = "Consultando recomendaciones...";
+            StateHasChanged();
+
+            List<RecomendacionResultado> resultadoConsulta = tipoRecomendacion switch
+            {
+                "1" => await RecomendacionService.ObtenerRecomendacionesPorDificultadesAsync(usuarioId.Trim()),
+                "2" => await RecomendacionService.ObtenerRecomendacionesPorSimilitudUsuariosAsync(usuarioId.Trim()),
+                "3" => await RecomendacionService.ObtenerRecomendacionesPorContenidoCursoAsync(usuarioId.Trim(), string.IsNullOrWhiteSpace(idiomaId) ? null : idiomaId.Trim()),
+                "4" => await RecomendacionService.ObtenerRecomendacionesPorIdiomaAsync(usuarioId.Trim(), string.IsNullOrWhiteSpace(idiomaId) ? null : idiomaId.Trim()),
+                "5" => await RecomendacionService.ObtenerRecomendacionesCombinadasAsync(usuarioId.Trim(), string.IsNullOrWhiteSpace(idiomaId) ? null : idiomaId.Trim()),
+                _ => new List<RecomendacionResultado>()
+            };
+
+            resultados = resultadoConsulta ?? new List<RecomendacionResultado>();
+            consultaRealizada = true;
+
+            if (resultados.Any())
+            {
+                mensaje = $"Se encontraron {resultados.Count} recomendaciones";
+                esExito = true;
+            }
+            else
+            {
+                var mensajeError = tipoRecomendacion switch
+                {
+                    "1" => $"No se encontraron recomendaciones. El usuario '{usuarioId}' necesita tener relaciones FALLA_EN con habilidades. Prueba con 'u1' que tiene dificultades con 'h_present_simple' y 'h_vocab_food'.",
+                    "2" => $"No se encontraron recomendaciones. El usuario '{usuarioId}' necesita tener usuarios similares o relaciones SIMILAR_A. Prueba con 'u1' o 'u2'.",
+                    "3" => $"No se encontraron recomendaciones para el idioma especificado. Prueba con 'en' o 'es'.",
+                    "4" => $"No se encontraron recomendaciones. Verifica que el usuario '{usuarioId}' estudie el idioma especificado.",
+                    "5" => $"No se encontraron recomendaciones combinadas. Verifica que el usuario '{usuarioId}' tenga datos suficientes.",
+                    _ => "No se encontraron recomendaciones."
+                };
+                mensaje = mensajeError;
+                esExito = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            mensaje = $"Error al consultar: {ex.Message}. Verifica que Neo4j esté ejecutándose y que la conexión sea correcta.";
+            esExito = false;
+            consultaRealizada = true;
+            resultados.Clear();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private string GetTipoRecomendacionDescripcion()
+    {
+        return tipoRecomendacion switch
+        {
+            "1" => "Analiza las habilidades donde el usuario presenta mayores dificultades y recomienda ejercicios para reforzarlas.",
+            "2" => "Identifica usuarios con patrones de aprendizaje similares y recomienda ejercicios que han sido útiles para ellos.",
+            "3" => "Recomienda ejercicios basándose en la estructura del curso y el nivel del usuario, reforzando contenidos ya dados o anticipando los siguientes.",
+            "4" => "Recomienda ejercicios del idioma que el usuario está estudiando, adecuados a su nivel y progreso.",
+            "5" => "Combina múltiples criterios (dificultades, similitud de usuarios, estructura del curso) para ofrecer recomendaciones más precisas y personalizadas.",
+            _ => "Selecciona un tipo de recomendación para ver su descripción."
+        };
+    }
+}
+
