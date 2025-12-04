@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "HzWxJQjDv8Q=",
+  "dgSpecHash": "+ofnYMO8Zg4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Julieta\\Desktop\\BDNR\\ObligatorioBDNR\\ObligatorioBDNR\\ObligatorioBDNR.csproj",
+  "projectFilePath": "C:\\Users\\natif\\Desktop\\BDNR\\ObligatorioBDNR\\ObligatorioBDNR\\ObligatorioBDNR.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Julieta\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\5.0.0\\microsoft.bcl.asyncinterfaces.5.0.0.nupkg.sha512",
-    "C:\\Users\\Julieta\\.nuget\\packages\\neo4j.driver\\5.15.0\\neo4j.driver.5.15.0.nupkg.sha512",
-    "C:\\Users\\Julieta\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+    "C:\\Users\\natif\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\5.0.0\\microsoft.bcl.asyncinterfaces.5.0.0.nupkg.sha512",
+    "C:\\Users\\natif\\.nuget\\packages\\neo4j.driver\\5.15.0\\neo4j.driver.5.15.0.nupkg.sha512",
+    "C:\\Users\\natif\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
   ],
   "logs": []
 }

@@ -162,166 +162,180 @@
                 <div class="tab-pane fade" id="relaciones" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Crear Relaciones</h5>
+                            <h5 class="card-title mb-4">Crear Relación</h5>
                             
                             <div class="mb-4">
-                                <h6>Usuario ESTUDIA Idioma</h6>
-                                <div class="row">
-                                    <div class="col-md-3 mb-2">
-                                        <input type="text" class="form-control" placeholder="Usuario ID" @bind="relEstudia.UsuarioId" />
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <input type="text" class="form-control" placeholder="Idioma ID" @bind="relEstudia.IdiomaId" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <input type="text" class="form-control" placeholder="Nivel" @bind="relEstudia.Nivel" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <input type="date" class="form-control" @bind="relEstudia.FechaInicio" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionEstudia">Crear</button>
-                                    </div>
-                                </div>
+                                <label class="form-label">Seleccionar Tipo de Relación</label>
+                                <select class="form-select" @bind="tipoRelacionSeleccionada" @bind:after="LimpiarFormularioRelacion">
+                                    <option value="">-- Seleccione una relación --</option>
+                                    <option value="ESTUDIA">Usuario ESTUDIA Idioma</option>
+                                    <option value="DEL_IDIOMA_UNIDAD">Unidad DEL_IDIOMA Idioma</option>
+                                    <option value="DEL_IDIOMA_HABILIDAD">Habilidad DEL_IDIOMA Idioma</option>
+                                    <option value="PERTENECE_A">Ejercicio PERTENECE_A Unidad</option>
+                                    <option value="REFUERZA">Ejercicio REFUERZA Habilidad</option>
+                                    <option value="REALIZA">Usuario REALIZA Ejercicio</option>
+                                    <option value="FALLA_EN">Usuario FALLA_EN Habilidad</option>
+                                    <option value="SIMILAR_A">Usuario SIMILAR_A Usuario</option>
+                                    <option value="PRECEDE_A">Unidad PRECEDE_A Unidad</option>
+                                </select>
                             </div>
 
-                            <div class="mb-4">
-                                <h6>Unidad DEL_IDIOMA Idioma</h6>
-                                <div class="row">
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Unidad ID" @bind="unidadIdioma.UnidadId" />
+                            @if (!string.IsNullOrEmpty(tipoRelacionSeleccionada))
+                            {
+                                <div class="card border-primary">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">@GetNombreRelacion(tipoRelacionSeleccionada)</h6>
                                     </div>
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Idioma ID" @bind="unidadIdioma.IdiomaId" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionUnidadIdioma">Crear</button>
+                                    <div class="card-body">
+                                        @if (tipoRelacionSeleccionada == "ESTUDIA")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Usuario ID</label>
+                                                <input type="text" class="form-control" @bind="relEstudia.UsuarioId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Idioma ID</label>
+                                                <input type="text" class="form-control" @bind="relEstudia.IdiomaId" />
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Nivel</label>
+                                                    <input type="text" class="form-control" @bind="relEstudia.Nivel" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Fecha Inicio</label>
+                                                    <input type="date" class="form-control" @bind="relEstudia.FechaInicio" />
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionEstudia">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "DEL_IDIOMA_UNIDAD")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Unidad ID</label>
+                                                <input type="text" class="form-control" @bind="unidadIdioma.UnidadId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Idioma ID</label>
+                                                <input type="text" class="form-control" @bind="unidadIdioma.IdiomaId" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionUnidadIdioma">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "DEL_IDIOMA_HABILIDAD")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Habilidad ID</label>
+                                                <input type="text" class="form-control" @bind="habilidadIdioma.HabilidadId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Idioma ID</label>
+                                                <input type="text" class="form-control" @bind="habilidadIdioma.IdiomaId" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionHabilidadIdioma">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "PERTENECE_A")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Ejercicio ID</label>
+                                                <input type="text" class="form-control" @bind="relPerteneceA.EjercicioId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Unidad ID</label>
+                                                <input type="text" class="form-control" @bind="relPerteneceA.UnidadId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Posición</label>
+                                                <input type="number" class="form-control" @bind="relPerteneceA.Posicion" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionPerteneceA">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "REFUERZA")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Ejercicio ID</label>
+                                                <input type="text" class="form-control" @bind="ejercicioRefuerza.EjercicioId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Habilidad ID</label>
+                                                <input type="text" class="form-control" @bind="ejercicioRefuerza.HabilidadId" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionRefuerza">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "REALIZA")
+                                        {
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Usuario ID</label>
+                                                    <input type="text" class="form-control" @bind="relRealiza.UsuarioId" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Ejercicio ID</label>
+                                                    <input type="text" class="form-control" @bind="relRealiza.EjercicioId" />
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Fecha Realizado</label>
+                                                <input type="datetime-local" class="form-control" @bind="relRealiza.FechaRealizado" />
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Resultado</label>
+                                                    <input type="text" class="form-control" @bind="relRealiza.Resultado" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Tiempo</label>
+                                                    <input type="number" class="form-control" @bind="relRealiza.Tiempo" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Intentos</label>
+                                                    <input type="number" class="form-control" @bind="relRealiza.Intentos" />
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionRealiza">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "FALLA_EN")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Usuario ID</label>
+                                                <input type="text" class="form-control" @bind="relFallaEn.UsuarioId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Habilidad ID</label>
+                                                <input type="text" class="form-control" @bind="relFallaEn.HabilidadId" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Veces Falladas</label>
+                                                <input type="number" class="form-control" @bind="relFallaEn.VecesFalladas" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionFallaEn">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "SIMILAR_A")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Usuario ID 1</label>
+                                                <input type="text" class="form-control" @bind="relSimilarA.UsuarioId1" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Usuario ID 2</label>
+                                                <input type="text" class="form-control" @bind="relSimilarA.UsuarioId2" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionSimilarA">Crear Relación</button>
+                                        }
+                                        else if (tipoRelacionSeleccionada == "PRECEDE_A")
+                                        {
+                                            <div class="mb-3">
+                                                <label class="form-label">Unidad ID 1</label>
+                                                <input type="text" class="form-control" @bind="relPrecedeA.UnidadId1" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Unidad ID 2</label>
+                                                <input type="text" class="form-control" @bind="relPrecedeA.UnidadId2" />
+                                            </div>
+                                            <button class="btn btn-primary" @onclick="CrearRelacionPrecedeA">Crear Relación</button>
+                                        }
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <h6>Habilidad DEL_IDIOMA Idioma</h6>
-                                <div class="row">
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Habilidad ID" @bind="habilidadIdioma.HabilidadId" />
-                                    </div>
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Idioma ID" @bind="habilidadIdioma.IdiomaId" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionHabilidadIdioma">Crear</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <h6>Ejercicio PERTENECE_A Unidad</h6>
-                                <div class="row">
-                                    <div class="col-md-4 mb-2">
-                                        <input type="text" class="form-control" placeholder="Ejercicio ID" @bind="relPerteneceA.EjercicioId" />
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <input type="text" class="form-control" placeholder="Unidad ID" @bind="relPerteneceA.UnidadId" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <input type="number" class="form-control" placeholder="Posición" @bind="relPerteneceA.Posicion" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionPerteneceA">Crear</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <h6>Ejercicio REFUERZA Habilidad</h6>
-                                <div class="row">
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Ejercicio ID" @bind="ejercicioRefuerza.EjercicioId" />
-                                    </div>
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Habilidad ID" @bind="ejercicioRefuerza.HabilidadId" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionRefuerza">Crear</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <h6>Usuario REALIZA Ejercicio</h6>
-                                <div class="row">
-                                    <div class="col-md-3 mb-2">
-                                        <input type="text" class="form-control" placeholder="Usuario ID" @bind="relRealiza.UsuarioId" />
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <input type="text" class="form-control" placeholder="Ejercicio ID" @bind="relRealiza.EjercicioId" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <input type="datetime-local" class="form-control" @bind="relRealiza.FechaRealizado" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <input type="text" class="form-control" placeholder="Resultado" @bind="relRealiza.Resultado" />
-                                    </div>
-                                    <div class="col-md-1 mb-2">
-                                        <input type="number" class="form-control" placeholder="Tiempo" @bind="relRealiza.Tiempo" />
-                                    </div>
-                                    <div class="col-md-1 mb-2">
-                                        <input type="number" class="form-control" placeholder="Intentos" @bind="relRealiza.Intentos" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionRealiza">Crear</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <h6>Usuario FALLA_EN Habilidad</h6>
-                                <div class="row">
-                                    <div class="col-md-4 mb-2">
-                                        <input type="text" class="form-control" placeholder="Usuario ID" @bind="relFallaEn.UsuarioId" />
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <input type="text" class="form-control" placeholder="Habilidad ID" @bind="relFallaEn.HabilidadId" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <input type="number" class="form-control" placeholder="Veces falladas" @bind="relFallaEn.VecesFalladas" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionFallaEn">Crear</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <h6>Usuario SIMILAR_A Usuario</h6>
-                                <div class="row">
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Usuario ID 1" @bind="relSimilarA.UsuarioId1" />
-                                    </div>
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Usuario ID 2" @bind="relSimilarA.UsuarioId2" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionSimilarA">Crear</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <h6>Unidad PRECEDE_A Unidad</h6>
-                                <div class="row">
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Unidad ID 1" @bind="relPrecedeA.UnidadId1" />
-                                    </div>
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" class="form-control" placeholder="Unidad ID 2" @bind="relPrecedeA.UnidadId2" />
-                                    </div>
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-sm btn-primary" @onclick="CrearRelacionPrecedeA">Crear</button>
-                                    </div>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -340,6 +354,8 @@
     private Habilidad nuevaHabilidad = new();
     private Ejercicio nuevoEjercicio = new();
    
+    private string tipoRelacionSeleccionada = string.Empty;
+    
     private RelacionEstudia relEstudia = new() { FechaInicio = DateTime.Now, FechaUltimaActividad = DateTime.Now };
     private (string UnidadId, string IdiomaId) unidadIdioma = ("", "");
     private (string HabilidadId, string IdiomaId) habilidadIdioma = ("", "");
@@ -349,6 +365,36 @@
     private RelacionFallaEn relFallaEn = new();
     private RelacionSimilarA relSimilarA = new();
     private RelacionPrecedeA relPrecedeA = new();
+
+    private void LimpiarFormularioRelacion()
+    {
+        relEstudia = new() { FechaInicio = DateTime.Now, FechaUltimaActividad = DateTime.Now };
+        unidadIdioma = ("", "");
+        habilidadIdioma = ("", "");
+        relPerteneceA = new();
+        ejercicioRefuerza = ("", "");
+        relRealiza = new() { FechaRealizado = DateTime.Now };
+        relFallaEn = new();
+        relSimilarA = new();
+        relPrecedeA = new();
+    }
+
+    private string GetNombreRelacion(string tipo)
+    {
+        return tipo switch
+        {
+            "ESTUDIA" => "Usuario ESTUDIA Idioma",
+            "DEL_IDIOMA_UNIDAD" => "Unidad DEL_IDIOMA Idioma",
+            "DEL_IDIOMA_HABILIDAD" => "Habilidad DEL_IDIOMA Idioma",
+            "PERTENECE_A" => "Ejercicio PERTENECE_A Unidad",
+            "REFUERZA" => "Ejercicio REFUERZA Habilidad",
+            "REALIZA" => "Usuario REALIZA Ejercicio",
+            "FALLA_EN" => "Usuario FALLA_EN Habilidad",
+            "SIMILAR_A" => "Usuario SIMILAR_A Usuario",
+            "PRECEDE_A" => "Unidad PRECEDE_A Unidad",
+            _ => "Relación"
+        };
+    }
 
     private async Task MostrarMensaje(string msg, bool exito)
     {
