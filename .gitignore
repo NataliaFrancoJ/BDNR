@@ -343,8 +343,11 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Rider
+.vs/
 .idea/
-*.sln.iml
+*.user
+*.suo
+*.cache
 
 # JetBrains Rider
 .idea/
@@ -366,3 +369,7 @@ logs/
 # Archivos temporales del sistema operativo
 .DS_Store
 Thumbs.db
+
+# Archivos y carpetas generadas por .NET
+bin/
+obj/

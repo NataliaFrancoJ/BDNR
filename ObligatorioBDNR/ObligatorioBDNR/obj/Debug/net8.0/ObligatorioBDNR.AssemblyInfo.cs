@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ObligatorioBDNR")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+779e5d7b532bf9f028e520326b73ff0326d19942")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f2f23ad241cd2ee7ff71f8ff754bebdd6967f725")]
 [assembly: System.Reflection.AssemblyProductAttribute("ObligatorioBDNR")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ObligatorioBDNR")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
