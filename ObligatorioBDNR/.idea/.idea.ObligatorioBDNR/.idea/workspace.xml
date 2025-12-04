@@ -10,15 +10,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7e06b98-c378-4071-9aa5-b037b5043f36" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObligatorioBDNR/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObligatorioBDNR/.idea/projectSettingsUpdater.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ObligatorioBDNR/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ObligatorioBDNR/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Components/Layout/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Components/Layout/NavMenu.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Components/Pages/ConsultarRecomendaciones.razor" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Components/Pages/ConsultarRecomendaciones.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Data/Neo4j/Neo4jContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Data/Neo4j/Neo4jContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Shared/_Layout.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Services/Neo4j/INeo4jRecomendacionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Services/Neo4j/INeo4jRecomendacionService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Services/Neo4j/Neo4jRecomendacionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Services/Neo4j/Neo4jRecomendacionService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/appsettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfoInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
@@ -28,7 +19,6 @@
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.assets.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.nuget.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/project.packagespec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,11 +42,9 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Index.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Index.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/appsettings.json" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/natif/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Julieta/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Components/Pages/CargarDatos.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Julieta/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Services/Neo4j/INeo4jRecomendacionService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Julieta/Desktop/BDNR/ObligatorioBDNR/ObligatorioBDNR/Services/Neo4j/Neo4jRecomendacionService.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
