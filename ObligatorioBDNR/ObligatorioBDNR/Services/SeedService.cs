@@ -4,9 +4,6 @@ using Domain;
 
 namespace ObligatorioBDNR.Services;
 
-/// <summary>
-/// Servicio opcional para poblar la base de datos con datos de prueba
-/// </summary>
 public class SeedService
 {
     private readonly UsuarioRepository _usuarioRepository;
@@ -26,9 +23,6 @@ public class SeedService
         _estadisticaRepository = estadisticaRepository;
     }
 
-    /// <summary>
-    /// Genera unidades y niveles para un curso
-    /// </summary>
     private List<UnidadCurso> GenerarUnidadesCurso(int totalUnidades, int nivelesPorUnidad, int unidadesCompletadas, int unidadActual, int nivelActual)
     {
         var unidades = new List<UnidadCurso>();
@@ -39,13 +33,11 @@ public class SeedService
             
             if (i < unidadActual)
             {
-                // Unidades completamente completadas
                 nivelesCompletados = nivelesPorUnidad;
                 completada = true;
             }
             else if (i == unidadActual)
             {
-                // Unidad actual - usar el nivel actual
                 nivelesCompletados = nivelActual;
                 completada = nivelActual >= nivelesPorUnidad;
             }
@@ -62,15 +54,28 @@ public class SeedService
         return unidades;
     }
 
-    /// <summary>
-    /// Pobla la base de datos con datos de ejemplo
-    /// </summary>
     public async Task SeedAsync()
     {
-        // Verificar si ya hay logros, si no, crearlos
+        var usuariosExistentes = await _usuarioRepository.GetAllAsync();
+        var usuariosBasicosExistentes = usuariosExistentes.Where(u => 
+            u.Email == "juan.perez@gmail.com" || 
+            u.Email == "maria.garcia@gmail.com" || 
+            u.Email == "carlos.rodriguez@gmail.com" ||
+            u.Email == "ana.martinez@gmail.com" ||
+            u.Email == "luis.fernandez@gmail.com" ||
+            u.Email == "sofia.lopez@gmail.com" ||
+            u.Email == "pedro.sanchez@gmail.com" ||
+            u.Email == "laura.torres@gmail.com" ||
+            u.Email == "roberto.diaz@gmail.com" ||
+            u.Email == "carmen.ruiz@gmail.com"
+        ).ToList();
+        
+        if (usuariosBasicosExistentes.Count >= 10)
+        {
+            return;
+        }
+        
         var logros = await _logroRepository.GetAllAsync();
-
-        // Crear logros de ejemplo solo si no existen
         var logrosParaCrear = new List<LogroDefinicion>
         {
             new LogroDefinicion
@@ -196,7 +201,6 @@ public class SeedService
 
         foreach (var logro in logrosParaCrear)
         {
-            // Verificar si el logro ya existe antes de insertarlo
             var logroExistente = await _logroRepository.GetByIdAsync(logro.Id);
             if (logroExistente == null)
             {
@@ -204,8 +208,6 @@ public class SeedService
             }
         }
 
-        // Crear usuarios de ejemplo
-        // Usuario 1: Juan Pérez
         var usuario1 = new Usuario
         {
             Id = Guid.NewGuid(),
@@ -215,7 +217,6 @@ public class SeedService
             FechaCreacion = DateTime.UtcNow.AddDays(-30),
             Autenticacion = new Autenticacion
             {
-                // Contraseña: password123
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123"),
                 Tiene2FA = false,
                 Metodo2FA = ""
@@ -231,7 +232,7 @@ public class SeedService
             {
                 IdiomaPrincipal = "Inglés",
                 NivelesCompletados = 5,
-                XpTotal = 0 // Se calculará automáticamente
+                XpTotal = 0
             },
             Cursos = new List<CursoUsuario>
             {
@@ -309,7 +310,6 @@ public class SeedService
             }
         };
 
-        // Usuario 2: María García
         var usuario2 = new Usuario
         {
             Id = Guid.NewGuid(),
@@ -319,7 +319,6 @@ public class SeedService
             FechaCreacion = DateTime.UtcNow.AddDays(-15),
             Autenticacion = new Autenticacion
             {
-                // Contraseña: password123
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123"),
                 Tiene2FA = true,
                 Metodo2FA = "App"
@@ -411,7 +410,6 @@ public class SeedService
             }
         };
 
-        // Usuario 3: Carlos Rodríguez
         var usuario3 = new Usuario
         {
             Id = Guid.NewGuid(),
@@ -538,7 +536,6 @@ public class SeedService
             }
         };
 
-        // Usuario 4: Ana Martínez
         var usuario4 = new Usuario
         {
             Id = Guid.NewGuid(),
@@ -563,7 +560,7 @@ public class SeedService
             {
                 IdiomaPrincipal = "Italiano",
                 NivelesCompletados = 3,
-                XpTotal = 0 // Se calculará automáticamente
+                XpTotal = 0 
             },
             Cursos = new List<CursoUsuario>
             {
@@ -641,7 +638,6 @@ public class SeedService
             }
         };
 
-        // Usuario 5: Luis Fernández
         var usuario5 = new Usuario
         {
             Id = Guid.NewGuid(),
@@ -666,7 +662,7 @@ public class SeedService
             {
                 IdiomaPrincipal = "Portugués",
                 NivelesCompletados = 12,
-                XpTotal = 0 // Se calculará automáticamente
+                XpTotal = 0 
             },
             Cursos = new List<CursoUsuario>
             {
@@ -772,7 +768,6 @@ public class SeedService
             }
         };
 
-        // Usuario 6: Sofía López
         var usuario6 = new Usuario
         {
             Id = Guid.NewGuid(),
@@ -925,9 +920,6 @@ public class SeedService
             }
         };
 
-        // Las amistades se establecerán bidireccionalmente después de insertar/actualizar los usuarios
-
-        // Calcular XP total para cada usuario basado en sus cursos
         CalcularXpTotal(usuario1);
         CalcularXpTotal(usuario2);
         CalcularXpTotal(usuario3);
@@ -935,7 +927,6 @@ public class SeedService
         CalcularXpTotal(usuario5);
         CalcularXpTotal(usuario6);
 
-        // Insertar o actualizar todos los usuarios, y guardar los IDs reales
         var usuariosParaInsertar = new[] { usuario1, usuario2, usuario3, usuario4, usuario5, usuario6 };
         var usuariosFinales = new List<Usuario>();
         
@@ -944,14 +935,11 @@ public class SeedService
             var usuarioExistente = await _usuarioRepository.GetByEmailAsync(usuario.Email);
             if (usuarioExistente == null)
             {
-                // Usuario no existe, insertarlo
                 await _usuarioRepository.InsertAsync(usuario);
                 usuariosFinales.Add(usuario);
             }
             else
             {
-                // Usuario existe, actualizar sus cursos
-                // Si no tiene cursos o tiene menos cursos que los definidos, actualizarlos
                 if (usuarioExistente.Cursos == null || !usuarioExistente.Cursos.Any() || 
                     usuarioExistente.Cursos.Count < usuario.Cursos.Count)
                 {
@@ -961,7 +949,6 @@ public class SeedService
                 }
                 else
                 {
-                    // Si tiene cursos pero no tienen unidades, agregar las unidades
                     bool necesitaActualizacion = false;
                     foreach (var cursoExistente in usuarioExistente.Cursos)
                     {
@@ -976,7 +963,6 @@ public class SeedService
                             }
                             else
                             {
-                                // Si no hay curso nuevo correspondiente, generar unidades por defecto
                                 cursoExistente.Unidades = GenerarUnidadesCurso(10, 5, cursoExistente.UnidadesCompletadas, 
                                     cursoExistente.UnidadActual > 0 ? cursoExistente.UnidadActual : 1, 
                                     cursoExistente.NivelActual > 0 ? cursoExistente.NivelActual : 1);
@@ -1002,7 +988,6 @@ public class SeedService
             }
         }
         
-        // Actualizar referencias de IDs para usar los IDs reales
         usuario1 = usuariosFinales[0];
         usuario2 = usuariosFinales[1];
         usuario3 = usuariosFinales[2];
@@ -1010,36 +995,20 @@ public class SeedService
         usuario5 = usuariosFinales[4];
         usuario6 = usuariosFinales[5];
 
-        // Limpiar duplicados existentes en todos los usuarios primero
         await _usuarioRepository.LimpiarDuplicadosAmigosTodosAsync();
 
-        // Establecer amistades bidireccionales
-        // Como el método es bidireccional, solo necesitamos llamarlo una vez por cada par de usuarios
-        // usuario1 ↔ usuario3
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario1.Id, usuario3.Id);
-        // usuario1 ↔ usuario5
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario1.Id, usuario5.Id);
-        // usuario2 ↔ usuario1
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario2.Id, usuario1.Id);
-        // usuario3 ↔ usuario2
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario3.Id, usuario2.Id);
-        // usuario4 ↔ usuario2
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario4.Id, usuario2.Id);
-        // usuario5 ↔ usuario3
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario5.Id, usuario3.Id);
-        // usuario5 ↔ usuario4
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario5.Id, usuario4.Id);
-        // usuario6 ↔ usuario2
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario6.Id, usuario2.Id);
-        // usuario6 ↔ usuario3
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario6.Id, usuario3.Id);
-        // usuario6 ↔ usuario5
         await _usuarioRepository.AgregarAmigoBidireccionalAsync(usuario6.Id, usuario5.Id);
 
-        // Crear actividades de ejemplo para todos los usuarios
         var actividades = new List<ActividadUsuario>();
-
-        // Actividades para usuario1
         actividades.Add(new ActividadUsuario
         {
             Id = Guid.NewGuid(),
@@ -1073,7 +1042,6 @@ public class SeedService
             }
         });
 
-        // Actividades para usuario2
         actividades.Add(new ActividadUsuario
         {
             Id = Guid.NewGuid(),
@@ -2026,9 +1994,6 @@ public class SeedService
             }
         });
 
-        // Insertar todas las nuevas actividades (las que agregamos después de las originales)
-        // Las nuevas actividades ya fueron agregadas a la lista 'actividades'
-        // Solo necesitamos insertar las que no existen
         var nuevasActividades = actividades.Skip(18).ToList(); // Saltamos las 18 actividades originales
         foreach (var actividad in nuevasActividades)
         {
@@ -2278,9 +2243,6 @@ public class SeedService
             }
         });
 
-        // Insertar todas las nuevas estadísticas (las que agregamos después de las originales)
-        // Las nuevas estadísticas ya fueron agregadas a la lista 'estadisticas'
-        // Solo necesitamos insertar las que no existen
         var nuevasEstadisticas = estadisticas.Skip(9).ToList(); // Saltamos las 9 estadísticas originales
         foreach (var estadistica in nuevasEstadisticas)
         {
@@ -2292,9 +2254,6 @@ public class SeedService
         }
     }
 
-    /// <summary>
-    /// Calcula el XP total del usuario basado en la suma de XP de todos sus cursos
-    /// </summary>
     private void CalcularXpTotal(Usuario usuario)
     {
         if (usuario.Cursos != null && usuario.Cursos.Any())
@@ -2309,25 +2268,29 @@ public class SeedService
         }
     }
 
-    /// <summary>
-    /// Genera 1000 usuarios con actividades, logros, estadísticas y amigos
-    /// </summary>
     public async Task Seed1000UsuariosAsync()
     {
+        var usuariosExistentes = await _usuarioRepository.GetAllAsync();
+        var totalUsuarios = usuariosExistentes.Count();
+        
+        if (totalUsuarios >= 100)
+        {
+            return;
+        }
+        
         var random = new Random();
         var idiomas = new[] { "Inglés", "Español", "Francés", "Alemán", "Italiano", "Portugués", "Japonés", "Coreano", "Chino", "Ruso", "Árabe", "Holandés", "Sueco", "Polaco", "Turco" };
         var tiposSuscripcion = new[] { "Gratis", "Plus" };
         var tiposAccion = new[] { "Lección Completada", "Práctica", "Desafío", "Repaso" };
         var logrosDisponibles = await _logroRepository.GetAllAsync();
         
-        Console.WriteLine("Iniciando generación de 1000 usuarios...");
-        
-        // Generar 1000 usuarios
         var usuarios = new List<Usuario>();
         var actividades = new List<ActividadUsuario>();
         var estadisticas = new List<EstadisticaUsuario>();
         
-        for (int i = 1; i <= 1000; i++)
+        var usuariosNecesarios = 100 - totalUsuarios;
+        
+        for (int i = 1; i <= usuariosNecesarios; i++)
         {
             var esPlus = random.Next(100) < 30; // 30% son Plus
             var fechaCreacion = DateTime.UtcNow.AddDays(-random.Next(1, 365));
@@ -2434,8 +2397,7 @@ public class SeedService
             CalcularXpTotal(usuario);
             usuarios.Add(usuario);
 
-            // Generar actividades (3-10 actividades por usuario)
-            var numActividades = random.Next(3, 11);
+            var numActividades = random.Next(5, 9);
             var fechasActividades = new HashSet<DateTime>();
             for (int j = 0; j < numActividades; j++)
             {
@@ -2468,10 +2430,9 @@ public class SeedService
                 });
             }
 
-            // Generar estadísticas solo para usuarios Plus (2-7 estadísticas)
             if (esPlus)
             {
-                var numEstadisticas = random.Next(2, 8);
+                var numEstadisticas = random.Next(2, 5);
                 var fechasEstadisticas = new HashSet<DateTime>();
                 for (int j = 0; j < numEstadisticas; j++)
                 {
@@ -2507,97 +2468,170 @@ public class SeedService
                 }
             }
 
-            if (i % 100 == 0)
+        }
+
+        var usuariosParaInsertar = new List<Usuario>();
+        foreach (var usuario in usuarios)
+        {
+            var usuarioExistente = await _usuarioRepository.GetByEmailAsync(usuario.Email);
+            if (usuarioExistente == null)
             {
-                Console.WriteLine($"Generados {i}/1000 usuarios...");
+                usuariosParaInsertar.Add(usuario);
+            }
+        }
+        
+        if (usuariosParaInsertar.Any())
+        {
+            for (int i = 0; i < usuariosParaInsertar.Count; i += 50)
+            {
+                var lote = usuariosParaInsertar.Skip(i).Take(50).ToList();
+                await _usuarioRepository.InsertManyAsync(lote);
             }
         }
 
-        Console.WriteLine("Insertando usuarios en la base de datos...");
-        // Insertar usuarios en lotes de 100
-        for (int i = 0; i < usuarios.Count; i += 100)
+        var todosLosUsuarios = await _usuarioRepository.GetAllAsync();
+        var usuariosPorEmail = todosLosUsuarios.ToDictionary(u => u.Email, u => u);
+        var actividadesParaInsertar = new List<ActividadUsuario>();
+        
+        foreach (var actividad in actividades)
         {
-            var lote = usuarios.Skip(i).Take(100).ToList();
-            await _usuarioRepository.InsertManyAsync(lote);
-            Console.WriteLine($"Insertados {Math.Min(i + 100, usuarios.Count)}/{usuarios.Count} usuarios...");
+            var usuarioGenerado = usuarios.FirstOrDefault(u => u.Id == actividad.IdUsuario);
+            if (usuarioGenerado != null)
+            {
+                var usuarioExistente = usuariosPorEmail.GetValueOrDefault(usuarioGenerado.Email);
+                if (usuarioExistente != null)
+                {
+                    var actividadExistente = await _actividadRepository.GetByUsuarioAndDateAsync(usuarioExistente.Id, actividad.Fecha);
+                    if (actividadExistente == null)
+                    {
+                        actividad.IdUsuario = usuarioExistente.Id;
+                        actividadesParaInsertar.Add(actividad);
+                    }
+                }
+            }
+        }
+        
+        if (actividadesParaInsertar.Any())
+        {
+            for (int i = 0; i < actividadesParaInsertar.Count; i += 200)
+            {
+                var lote = actividadesParaInsertar.Skip(i).Take(200).ToList();
+                await _actividadRepository.InsertManyAsync(lote);
+            }
         }
 
-        Console.WriteLine("Insertando actividades en la base de datos...");
-        // Insertar actividades en lotes de 500
-        for (int i = 0; i < actividades.Count; i += 500)
+        var estadisticasParaInsertar = new List<EstadisticaUsuario>();
+        
+        foreach (var estadistica in estadisticas)
         {
-            var lote = actividades.Skip(i).Take(500).ToList();
-            await _actividadRepository.InsertManyAsync(lote);
-            Console.WriteLine($"Insertadas {Math.Min(i + 500, actividades.Count)}/{actividades.Count} actividades...");
+            var usuarioGenerado = usuarios.FirstOrDefault(u => u.Id == estadistica.IdUsuario);
+            if (usuarioGenerado != null)
+            {
+                var usuarioExistente = usuariosPorEmail.GetValueOrDefault(usuarioGenerado.Email);
+                if (usuarioExistente != null)
+                {
+                    var estadisticaExistente = await _estadisticaRepository.GetByUsuarioAndDateAsync(usuarioExistente.Id, estadistica.Fecha);
+                    if (estadisticaExistente == null)
+                    {
+                        estadistica.IdUsuario = usuarioExistente.Id;
+                        estadisticasParaInsertar.Add(estadistica);
+                    }
+                }
+            }
+        }
+        
+        if (estadisticasParaInsertar.Any())
+        {
+            for (int i = 0; i < estadisticasParaInsertar.Count; i += 200)
+            {
+                var lote = estadisticasParaInsertar.Skip(i).Take(200).ToList();
+                await _estadisticaRepository.InsertManyAsync(lote);
+            }
         }
 
-        Console.WriteLine("Insertando estadísticas en la base de datos...");
-        // Insertar estadísticas en lotes de 500
-        for (int i = 0; i < estadisticas.Count; i += 500)
-        {
-            var lote = estadisticas.Skip(i).Take(500).ToList();
-            await _estadisticaRepository.InsertManyAsync(lote);
-            Console.WriteLine($"Insertadas {Math.Min(i + 500, estadisticas.Count)}/{estadisticas.Count} estadísticas...");
-        }
-
-        Console.WriteLine("Estableciendo relaciones de amistad...");
-        // Establecer amistades (cada usuario tiene 2-10 amigos)
-        var usuariosIds = usuarios.Select(u => u.Id).ToList();
+        var usuariosList = todosLosUsuarios.ToList();
+        var usuariosIds = usuariosList.Select(u => u.Id).ToList();
         var amistadesEstablecidas = 0;
-        foreach (var usuario in usuarios)
+        var usuariosProcesados = 0;
+        var amistadesBidireccionales = 0;
+        
+        foreach (var usuario in usuariosList)
         {
-            var numAmigos = random.Next(2, 11);
+            var numAmigos = random.Next(2, 6);
             var amigosIds = usuariosIds
                 .Where(id => id != usuario.Id)
                 .OrderBy(x => random.Next())
                 .Take(numAmigos)
                 .ToList();
 
+            var necesitaActualizacion = false;
             foreach (var amigoId in amigosIds)
             {
-                var amigo = usuarios.First(u => u.Id == amigoId);
-                usuario.Amigos.Add(new Amigo
+                var amigo = usuariosList.First(u => u.Id == amigoId);
+                if (usuario.Amigos == null || !usuario.Amigos.Any(a => a.IdUsuario == amigoId))
                 {
-                    IdUsuario = amigoId,
-                    Username = amigo.Username
-                });
-                amistadesEstablecidas++;
-            }
-
-            // Actualizar usuario con amigos
-            await _usuarioRepository.UpdateAsync(usuario.Id, usuario);
-
-            if (usuarios.IndexOf(usuario) % 100 == 0)
-            {
-                Console.WriteLine($"Procesados {usuarios.IndexOf(usuario) + 1}/{usuarios.Count} usuarios para amistades...");
-            }
-        }
-
-        // Establecer amistades bidireccionales
-        Console.WriteLine("Estableciendo amistades bidireccionales...");
-        var amistadesBidireccionales = 0;
-        foreach (var usuario in usuarios)
-        {
-            foreach (var amigo in usuario.Amigos)
-            {
-                var amigoUsuario = usuarios.FirstOrDefault(u => u.Id == amigo.IdUsuario);
-                if (amigoUsuario != null && !amigoUsuario.Amigos.Any(a => a.IdUsuario == usuario.Id))
-                {
-                    amigoUsuario.Amigos.Add(new Amigo
+                    if (usuario.Amigos == null)
                     {
-                        IdUsuario = usuario.Id,
-                        Username = usuario.Username
+                        usuario.Amigos = new List<Amigo>();
+                    }
+                    usuario.Amigos.Add(new Amigo
+                    {
+                        IdUsuario = amigoId,
+                        Username = amigo.Username
                     });
-                    await _usuarioRepository.UpdateAsync(amigoUsuario.Id, amigoUsuario);
-                    amistadesBidireccionales++;
+                    amistadesEstablecidas++;
+                    necesitaActualizacion = true;
                 }
             }
 
-            if (usuarios.IndexOf(usuario) % 100 == 0)
+            if (necesitaActualizacion)
             {
-                Console.WriteLine($"Procesadas amistades bidireccionales para {usuarios.IndexOf(usuario) + 1}/{usuarios.Count} usuarios...");
+                await _usuarioRepository.UpdateAsync(usuario.Id, usuario);
             }
+
+            usuariosProcesados++;
         }
+
+        usuariosProcesados = 0;
+        
+        foreach (var usuario in usuariosList)
+        {
+            if (usuario.Amigos != null)
+            {
+                foreach (var amigo in usuario.Amigos)
+                {
+                    var amigoUsuario = usuariosList.FirstOrDefault(u => u.Id == amigo.IdUsuario);
+                    if (amigoUsuario != null && (amigoUsuario.Amigos == null || !amigoUsuario.Amigos.Any(a => a.IdUsuario == usuario.Id)))
+                    {
+                        if (amigoUsuario.Amigos == null)
+                        {
+                            amigoUsuario.Amigos = new List<Amigo>();
+                        }
+                        amigoUsuario.Amigos.Add(new Amigo
+                        {
+                            IdUsuario = usuario.Id,
+                            Username = usuario.Username
+                        });
+                        await _usuarioRepository.UpdateAsync(amigoUsuario.Id, amigoUsuario);
+                        amistadesBidireccionales++;
+                    }
+                }
+            }
+
+            usuariosProcesados++;
+        }
+
+        var actividadesExistentes = await _actividadRepository.GetAllAsync();
+        var estadisticasExistentes = await _estadisticaRepository.GetAllAsync();
+        var logrosExistentes = await _logroRepository.GetAllAsync();
+        
+        Console.WriteLine($"\n=== RESUMEN TOTAL DE DOCUMENTOS ===");
+        Console.WriteLine($"- Logros: {logrosExistentes.Count()}");
+        Console.WriteLine($"- Usuarios: {usuariosList.Count()}");
+        Console.WriteLine($"- Actividades: {actividadesExistentes.Count()}");
+        Console.WriteLine($"- Estadísticas: {estadisticasExistentes.Count()}");
+        Console.WriteLine($"- TOTAL: {logrosExistentes.Count() + usuariosList.Count() + actividadesExistentes.Count() + estadisticasExistentes.Count()} documentos");
+        Console.WriteLine($"=====================================\n");
     }
 }
 

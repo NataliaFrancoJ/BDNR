@@ -47,7 +47,7 @@ public class ProgresoGeneral
 {
     public string IdiomaPrincipal { get; set; }
     public int NivelesCompletados { get; set; }
-    public int XpTotal { get; set; } // Se calcula como la suma de XP de todos los cursos
+    public int XpTotal { get; set; } 
 }
 
 public class CursoUsuario
@@ -56,9 +56,9 @@ public class CursoUsuario
     public int XpAcumulado { get; set; }
     public int UnidadesCompletadas { get; set; }
     public DateTime FechaInscripcion { get; set; }
-    public int UnidadActual { get; set; } // Unidad en la que está actualmente el usuario
-    public int NivelActual { get; set; } // Nivel en la unidad actual
-    public List<UnidadCurso> Unidades { get; set; } // Lista de unidades del curso
+    public int UnidadActual { get; set; } 
+    public int NivelActual { get; set; } 
+    public List<UnidadCurso> Unidades { get; set; }
 }
 
 public class UnidadCurso

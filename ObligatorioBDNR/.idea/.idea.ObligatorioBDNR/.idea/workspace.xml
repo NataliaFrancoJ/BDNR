@@ -11,20 +11,14 @@
   <component name="ChangeListManager">
     <list default="true" id="c7e06b98-c378-4071-9aa5-b037b5043f36" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/DataAccess/MongoContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DataAccess/MongoContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataAccess/Repositories/ActividadUsuarioRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DataAccess/Repositories/ActividadUsuarioRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataAccess/Repositories/EstadisticaUsuarioRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DataAccess/Repositories/EstadisticaUsuarioRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataAccess/Repositories/LogroRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DataAccess/Repositories/LogroRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataAccess/Repositories/UsuarioRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DataAccess/Repositories/UsuarioRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Domain/Usuario.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Domain/Usuario.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Actividad/ListaActividad.razor" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Actividad/ListaActividad.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Actividad/RegistrarActividad.razor" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Index.razor" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Index.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Perfil/EditarPerfil.razor" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Pages/Perfil/EditarPerfil.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Services/MongoValidatorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Services/MongoValidatorService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Services/SeedService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Services/SeedService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/Shared/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/Shared/NavMenu.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/Debug/net8.0/ObligatorioBDNR.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.model.nuget.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/ObligatorioBDNR/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +53,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    ".NET Launch Settings Profile.ObligatorioBDNR: http.executor": "Run",
     ".NET Launch Settings Profile.ObligatorioBDNR: https.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "MongoDB",
@@ -77,7 +72,7 @@
     ]
   }
 }]]></component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.ObligatorioBDNR: https">
+  <component name="RunManager" selected=".NET Launch Settings Profile.ObligatorioBDNR: http">
     <configuration name="ObligatorioBDNR: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ObligatorioBDNR/ObligatorioBDNR.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net8.0" />

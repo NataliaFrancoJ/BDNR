@@ -20,6 +20,11 @@ public class MongoValidatorService
     /// </summary>
     public async Task ConfigurarValidadoresAsync()
     {
+        if (_database == null)
+        {
+            throw new InvalidOperationException("La base de datos no está disponible.");
+        }
+
         await ConfigurarValidadorUsuariosAsync();
         await ConfigurarValidadorActividadUsuarioAsync();
         await ConfigurarValidadorLogrosDefinicionAsync();
@@ -141,8 +146,12 @@ public class MongoValidatorService
                                             {
                                                 "CompartirActividad", new BsonDocument
                                                 {
-                                                    { "bsonType", "string" },
-                                                    { "enum", new BsonArray { "todos", "amigos", "nadie", null } }
+                                                    { "anyOf", new BsonArray
+                                                        {
+                                                            new BsonDocument { { "bsonType", "string" }, { "enum", new BsonArray { "todos", "amigos", "nadie" } } },
+                                                            new BsonDocument { { "bsonType", "null" } }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -366,20 +375,34 @@ public class MongoValidatorService
                                             {
                                                 "Tipo", new BsonDocument
                                                 {
-                                                    { "bsonType", "string" },
-                                                    { "enum", new BsonArray { "FREE", "PLUS", null } }
+                                                    { "anyOf", new BsonArray
+                                                        {
+                                                            new BsonDocument { { "bsonType", "string" }, { "enum", new BsonArray { "FREE", "PLUS", "Gratis", "Plus" } } },
+                                                            new BsonDocument { { "bsonType", "null" } }
+                                                        }
+                                                    }
                                                 }
                                             },
                                             {
                                                 "FechaInicio", new BsonDocument
                                                 {
-                                                    { "bsonType", "date" }
+                                                    { "anyOf", new BsonArray
+                                                        {
+                                                            new BsonDocument { { "bsonType", "date" } },
+                                                            new BsonDocument { { "bsonType", "null" } }
+                                                        }
+                                                    }
                                                 }
                                             },
                                             {
                                                 "FechaFin", new BsonDocument
                                                 {
-                                                    { "bsonType", "date" }
+                                                    { "anyOf", new BsonArray
+                                                        {
+                                                            new BsonDocument { { "bsonType", "date" } },
+                                                            new BsonDocument { { "bsonType", "null" } }
+                                                        }
+                                                    }
                                                 }
                                             },
                                             {
@@ -722,29 +745,46 @@ public class MongoValidatorService
     /// </summary>
     private async Task AplicarValidadorAsync(string collectionName, BsonDocument validator)
     {
+        if (_database == null)
+        {
+            throw new InvalidOperationException($"No se puede aplicar validador a {collectionName}: la base de datos no está disponible.");
+        }
+
+        if (validator == null)
+        {
+            throw new ArgumentNullException(nameof(validator), $"El validador para {collectionName} no puede ser null.");
+        }
+
         try
         {
-            // Verificar si la colección existe
+            var dbNames = await _database.Client.ListDatabaseNamesAsync();
+            await dbNames.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"No se puede conectar a MongoDB: {ex.Message}", ex);
+        }
+
+        try
+        {
             var collections = await _database.ListCollectionNamesAsync();
             var collectionNames = await collections.ToListAsync();
-            var collectionExists = collectionNames.Contains(collectionName);
+            var collectionExists = collectionNames != null && collectionNames.Contains(collectionName);
 
             if (collectionExists)
             {
-                // Si la colección existe, actualizar el validador
                 var command = new BsonDocument
                 {
                     { "collMod", collectionName },
                     { "validator", validator },
-                    { "validationLevel", "moderate" }, // Valida solo documentos nuevos y actualizados
-                    { "validationAction", "error" } // Rechaza documentos que no cumplan el esquema
+                    { "validationLevel", "moderate" },
+                    { "validationAction", "error" }
                 };
 
                 await _database.RunCommandAsync<BsonDocument>(command);
             }
             else
             {
-                // Si la colección no existe, crearla con el validador usando un comando
                 var createCommand = new BsonDocument
                 {
                     { "create", collectionName },
@@ -756,12 +796,13 @@ public class MongoValidatorService
                 await _database.RunCommandAsync<BsonDocument>(createCommand);
             }
         }
-        catch (MongoCommandException ex)
+        catch (MongoCommandException)
         {
-            // Si hay un error, intentar con validationLevel "strict" para documentos existentes
-            // o simplemente loguear el error
-            Console.WriteLine($"Error al aplicar validador a {collectionName}: {ex.Message}");
-            // No lanzamos la excepción para que la aplicación pueda continuar
+            throw;
+        }
+        catch (Exception)
+        {
+            throw;
         }
     }
 }
