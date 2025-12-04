@@ -32,11 +32,23 @@
                 </NavLink>
             </div>
 
-            <div class="nav-item px-3">
-                <a class="nav-link" href="/auth/logout" @onclick="CerrarSesion" @onclick:preventDefault>
-                    Cerrar Sesión
-                </a>
-            </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="cursos">
+                        Mis Cursos
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="estadisticas">
+                        Estadísticas
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <a class="nav-link" href="/auth/logout" @onclick="CerrarSesion" @onclick:preventDefault>
+                        Cerrar Sesión
+                    </a>
+                </div>
         }
         else
         {
@@ -55,35 +67,38 @@
     </nav>
 </div>
 
-@code {
-    private string username = "";
-    private bool estaAutenticado = false;
+    @code {
+        private string username = "";
+        private bool estaAutenticado = false;
+        private bool esPlus = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        Navigation.LocationChanged += OnLocationChanged;
-        await ActualizarEstado();
-    }
-
-    private async void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
-    {
-        await ActualizarEstado();
-    }
-
-    private async Task ActualizarEstado()
-    {
-        estaAutenticado = AuthService.EstaAutenticado();
-        if (estaAutenticado)
+        protected override async Task OnInitializedAsync()
         {
-            var usuario = await AuthService.GetUsuarioActualAsync();
-            username = usuario?.Username ?? "";
+            Navigation.LocationChanged += OnLocationChanged;
+            await ActualizarEstado();
         }
-        else
+
+        private async void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
         {
-            username = "";
+            await ActualizarEstado();
         }
-        StateHasChanged();
-    }
+
+        private async Task ActualizarEstado()
+        {
+            estaAutenticado = AuthService.EstaAutenticado();
+            if (estaAutenticado)
+            {
+                var usuario = await AuthService.GetUsuarioActualAsync();
+                username = usuario?.Username ?? "";
+                esPlus = usuario?.Suscripcion?.Tipo == "Plus";
+            }
+            else
+            {
+                username = "";
+                esPlus = false;
+            }
+            StateHasChanged();
+        }
 
     private void CerrarSesion()
     {

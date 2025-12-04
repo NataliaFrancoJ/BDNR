@@ -1,0 +1,132 @@
+@page "/cursos/{idioma}"
+@inject AuthService AuthService
+@inject UsuarioRepository UsuarioRepository
+@inject NavigationManager Navigation
+@using System.Linq
+
+<PageTitle>Detalle Curso - Duolingo</PageTitle>
+
+@if (!AuthService.EstaAutenticado())
+{
+    <div class="alert alert-warning">
+        Debes iniciar sesión para ver los detalles del curso. <a href="/login">Iniciar Sesión</a>
+    </div>
+}
+else if (usuario == null || curso == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <div class="mb-3">
+        <a href="/cursos" class="btn btn-secondary">← Volver a Mis Cursos</a>
+    </div>
+
+    <h1>Curso de @curso.Idioma</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Progreso General</h5>
+                    <p><strong>XP Acumulado:</strong> @curso.XpAcumulado XP</p>
+                    <p><strong>Unidades Completadas:</strong> @curso.UnidadesCompletadas / @(curso.Unidades?.Count ?? 0)</p>
+                    <p><strong>Unidad Actual:</strong> @curso.UnidadActual</p>
+                    <p><strong>Nivel Actual:</strong> @curso.NivelActual</p>
+                    <p><strong>Fecha de Inscripción:</strong> @curso.FechaInscripcion.ToString("dd/MM/yyyy")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Unidades del Curso</h3>
+        </div>
+        <div class="card-body">
+            @if (curso.Unidades != null && curso.Unidades.Any())
+            {
+                <div class="row">
+                    @foreach (var unidad in curso.Unidades)
+                    {
+                        <div class="col-md-6 mb-3">
+                            <div class="card @(unidad.Completada ? "border-success" : unidad.NumeroUnidad == curso.UnidadActual ? "border-primary" : "")">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        @unidad.Nombre
+                                        @if (unidad.Completada)
+                                        {
+                                            <span class="badge bg-success ms-2">Completada</span>
+                                        }
+                                        else if (unidad.NumeroUnidad == curso.UnidadActual)
+                                        {
+                                            <span class="badge bg-primary ms-2">En Progreso</span>
+                                        }
+                                    </h5>
+                                    <p class="card-text">
+                                        <strong>Niveles:</strong> @unidad.NivelesCompletados / @unidad.NivelesTotales
+                                    </p>
+                                    <div class="progress mb-2">
+                                        @{
+                                            var porcentaje = unidad.NivelesTotales > 0 
+                                                ? (unidad.NivelesCompletados * 100) / unidad.NivelesTotales 
+                                                : 0;
+                                        }
+                                        <div class="progress-bar @(unidad.Completada ? "bg-success" : "bg-primary")" 
+                                             role="progressbar" 
+                                             style="width: @porcentaje%"
+                                             aria-valuenow="@unidad.NivelesCompletados" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="@unidad.NivelesTotales">
+                                            @porcentaje%
+                                        </div>
+                                    </div>
+                                    @if (unidad.NumeroUnidad == curso.UnidadActual)
+                                    {
+                                        <small class="text-muted">Estás en el nivel @curso.NivelActual de esta unidad</small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No hay unidades disponibles para este curso.</p>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Idioma { get; set; } = string.Empty;
+
+    private Usuario? usuario;
+    private CursoUsuario? curso;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.EstaAutenticado())
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        usuario = await AuthService.GetUsuarioActualAsync();
+        if (usuario == null)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        curso = usuario.Cursos?.FirstOrDefault(c => c.Idioma.Equals(Idioma, StringComparison.OrdinalIgnoreCase));
+        if (curso == null)
+        {
+            Navigation.NavigateTo("/cursos");
+            return;
+        }
+    }
+}
+

@@ -22,9 +22,10 @@ public class Program
             new MongoContext(mongoConnectionString, mongoDatabaseName));
 
         // Registrar Repositorios como Scoped
-        builder.Services.AddScoped<UsuarioRepository>();
-        builder.Services.AddScoped<LogroRepository>();
-        builder.Services.AddScoped<ActividadUsuarioRepository>();
+            builder.Services.AddScoped<UsuarioRepository>();
+            builder.Services.AddScoped<LogroRepository>();
+            builder.Services.AddScoped<ActividadUsuarioRepository>();
+            builder.Services.AddScoped<EstadisticaUsuarioRepository>();
 
         // Registrar servicios opcionales
         builder.Services.AddScoped<ObligatorioBDNR.Services.SeedService>();
@@ -66,13 +67,37 @@ public class Program
         app.MapFallbackToPage("/_Host");
         app.MapRazorPages();
 
+        // Configurar validadores de MongoDB
+        using (var scope = app.Services.CreateScope())
+        {
+            var mongoContext = scope.ServiceProvider.GetRequiredService<MongoContext>();
+            var validatorService = new ObligatorioBDNR.Services.MongoValidatorService(mongoContext.Database);
+            try
+            {
+                validatorService.ConfigurarValidadoresAsync().Wait();
+                Console.WriteLine("Validadores de MongoDB configurados correctamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Advertencia: No se pudieron configurar todos los validadores: {ex.Message}");
+                // Continuar la ejecución aunque falle la configuración de validadores
+            }
+        }
+
         // Opcional: Ejecutar seed en desarrollo
         if (app.Environment.IsDevelopment())
         {
             using (var scope = app.Services.CreateScope())
             {
                 var seedService = scope.ServiceProvider.GetRequiredService<ObligatorioBDNR.Services.SeedService>();
+                
+                // Seed básico (usuarios de ejemplo)
                 seedService.SeedAsync().Wait();
+                
+                // Seed de 1000 usuarios (comentar si no se desea ejecutar)
+                Console.WriteLine("\n=== Iniciando generación de 1000 usuarios ===");
+                seedService.Seed1000UsuariosAsync().Wait();
+                Console.WriteLine("=== Generación de 1000 usuarios completada ===\n");
             }
         }
 

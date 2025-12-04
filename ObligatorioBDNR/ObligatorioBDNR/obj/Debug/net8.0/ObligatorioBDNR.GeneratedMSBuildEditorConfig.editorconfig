@@ -30,8 +30,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWN0aXZpZGFkXExpc3RhQWN0aXZpZGFkLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Actividad/RegistrarActividad.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWN0aXZpZGFkXFJlZ2lzdHJhckFjdGl2aWRhZC5yYXpvcg==
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Cursos/DetalleCurso.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3Vyc29zXERldGFsbGVDdXJzby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Cursos/GestionarCursos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3Vyc29zXEdlc3Rpb25hckN1cnNvcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Estadisticas/VerEstadisticas.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXN0YWRpc3RpY2FzXFZlckVzdGFkaXN0aWNhcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/BDNR/ObligatorioBDNR/ObligatorioBDNR/Pages/Index.razor]

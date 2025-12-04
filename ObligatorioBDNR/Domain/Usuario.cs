@@ -21,9 +21,11 @@ public class Usuario
 
     public List<LogroUsuario> Logros { get; set; }
     public List<Amigo> Amigos { get; set; }
+    public List<CursoUsuario> Cursos { get; set; }
 
     public Suscripcion Suscripcion { get; set; }
     public Preferencias Preferencias { get; set; }
+    public EstadisticasGenerales EstadisticasGenerales { get; set; }
 }
 
 public class Autenticacion
@@ -45,7 +47,27 @@ public class ProgresoGeneral
 {
     public string IdiomaPrincipal { get; set; }
     public int NivelesCompletados { get; set; }
-    public int XpTotal { get; set; }
+    public int XpTotal { get; set; } // Se calcula como la suma de XP de todos los cursos
+}
+
+public class CursoUsuario
+{
+    public string Idioma { get; set; }
+    public int XpAcumulado { get; set; }
+    public int UnidadesCompletadas { get; set; }
+    public DateTime FechaInscripcion { get; set; }
+    public int UnidadActual { get; set; } // Unidad en la que está actualmente el usuario
+    public int NivelActual { get; set; } // Nivel en la unidad actual
+    public List<UnidadCurso> Unidades { get; set; } // Lista de unidades del curso
+}
+
+public class UnidadCurso
+{
+    public int NumeroUnidad { get; set; }
+    public string Nombre { get; set; }
+    public int NivelesTotales { get; set; }
+    public int NivelesCompletados { get; set; }
+    public bool Completada { get; set; }
 }
 
 public class LogroUsuario
@@ -81,4 +103,13 @@ public class Notificaciones
     public bool Email { get; set; }
     public bool Push { get; set; }
     public bool RecordatoriosDiarios { get; set; }
+}
+
+public class EstadisticasGenerales
+{
+    public int RachaActual { get; set; }
+    public int RachaMaxima { get; set; }
+    public int XpSemanaActual { get; set; }
+    public int XpSemanaAnterior { get; set; }
+    public int DiasActivosUltimos30 { get; set; }
 }

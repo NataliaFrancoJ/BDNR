@@ -1,0 +1,303 @@
+@page "/cursos"
+@inject AuthService AuthService
+@inject UsuarioRepository UsuarioRepository
+@inject NavigationManager Navigation
+@using System.Linq
+
+<PageTitle>Gestionar Cursos - Duolingo</PageTitle>
+
+@if (!AuthService.EstaAutenticado())
+{
+    <div class="alert alert-warning">
+        Debes iniciar sesión para gestionar tus cursos. <a href="/login">Iniciar Sesión</a>
+    </div>
+}
+else if (usuario == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <h1>Gestionar Mis Cursos</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3>Mis Cursos Inscritos</h3>
+                </div>
+                <div class="card-body">
+                    @if (usuario.Cursos != null && usuario.Cursos.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Idioma</th>
+                                        <th>Progreso</th>
+                                        <th>XP Acumulado</th>
+                                        <th>Unidades</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var curso in usuario.Cursos)
+                                    {
+                                        <tr>
+                                            <td><strong>@curso.Idioma</strong></td>
+                                            <td>
+                                                @if (curso.Unidades != null && curso.Unidades.Any())
+                                                {
+                                                    <a href="/cursos/@curso.Idioma" class="badge bg-info text-decoration-none">
+                                                        Unidad @curso.UnidadActual, Nivel @curso.NivelActual
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Sin progreso</span>
+                                                }
+                                            </td>
+                                            <td>@curso.XpAcumulado XP</td>
+                                            <td>@curso.UnidadesCompletadas / @(curso.Unidades?.Count ?? 0)</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-danger" @onclick="() => EliminarCurso(curso.Idioma)">Eliminar</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No estás inscrito en ningún curso.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3>Inscribirse a un Nuevo Curso</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Seleccionar Idioma</label>
+                        <select class="form-select" @bind="idiomaSeleccionado">
+                            <option value="">-- Selecciona un idioma --</option>
+                            @foreach (var idioma in idiomasDisponibles)
+                            {
+                                <option value="@idioma">@idioma</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" @onclick="InscribirseACurso" disabled="@(string.IsNullOrEmpty(idiomaSeleccionado) || guardando)">
+                        @(guardando ? "Inscribiendo..." : "Inscribirse")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger">@mensajeError</div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success">@mensajeExito</div>
+    }
+}
+
+@code {
+    private Usuario? usuario;
+    private string idiomaSeleccionado = string.Empty;
+    private string mensajeError = string.Empty;
+    private string mensajeExito = string.Empty;
+    private bool guardando = false;
+
+    private readonly List<string> idiomasDisponibles = new()
+    {
+        "Inglés", "Español", "Francés", "Alemán", "Italiano", "Portugués", 
+        "Ruso", "Japonés", "Chino", "Coreano", "Árabe", "Holandés"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.EstaAutenticado())
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        usuario = await AuthService.GetUsuarioActualAsync();
+        if (usuario == null)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        // Filtrar idiomas disponibles (excluir los que ya está inscrito)
+        if (usuario.Cursos != null && usuario.Cursos.Any())
+        {
+            var idiomasInscritos = usuario.Cursos.Select(c => c.Idioma).ToList();
+            idiomasDisponibles.RemoveAll(i => idiomasInscritos.Contains(i));
+        }
+    }
+
+    private async Task InscribirseACurso()
+    {
+        if (string.IsNullOrEmpty(idiomaSeleccionado) || usuario == null)
+        {
+            return;
+        }
+
+        guardando = true;
+        mensajeError = string.Empty;
+        mensajeExito = string.Empty;
+
+        try
+        {
+            // Verificar que no esté ya inscrito
+            if (usuario.Cursos != null && usuario.Cursos.Any(c => c.Idioma == idiomaSeleccionado))
+            {
+                mensajeError = "Ya estás inscrito en este curso.";
+                guardando = false;
+                return;
+            }
+
+            // Agregar el nuevo curso
+            usuario.Cursos ??= new List<CursoUsuario>();
+            var nuevoCurso = new CursoUsuario
+            {
+                Idioma = idiomaSeleccionado,
+                XpAcumulado = 0,
+                UnidadesCompletadas = 0,
+                FechaInscripcion = DateTime.UtcNow,
+                UnidadActual = 1,
+                NivelActual = 1,
+                Unidades = GenerarUnidadesIniciales()
+            };
+            usuario.Cursos.Add(nuevoCurso);
+
+            // Calcular XP total
+            CalcularXpTotal(usuario);
+
+            // Actualizar en la base de datos
+            var resultado = await UsuarioRepository.UpdateAsync(usuario.Id, usuario);
+            
+            if (resultado)
+            {
+                var idiomaInscrito = idiomaSeleccionado;
+                mensajeExito = $"Te has inscrito exitosamente al curso de {idiomaInscrito}.";
+                idiomaSeleccionado = string.Empty;
+                idiomasDisponibles.Remove(idiomaInscrito);
+                StateHasChanged();
+                
+                // Recargar usuario
+                usuario = await UsuarioRepository.GetByIdAsync(usuario.Id);
+                if (usuario.Cursos != null && usuario.Cursos.Any())
+                {
+                    var idiomasInscritos = usuario.Cursos.Select(c => c.Idioma).ToList();
+                    idiomasDisponibles.RemoveAll(i => idiomasInscritos.Contains(i));
+                }
+            }
+            else
+            {
+                mensajeError = "No se pudo inscribir al curso. Por favor, intenta nuevamente.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al inscribirse al curso: {ex.Message}";
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+
+    private async Task EliminarCurso(string idioma)
+    {
+        if (usuario == null || usuario.Cursos == null)
+        {
+            return;
+        }
+
+        if (!usuario.Cursos.Any(c => c.Idioma == idioma))
+        {
+            return;
+        }
+
+        usuario.Cursos.RemoveAll(c => c.Idioma == idioma);
+
+        // Calcular XP total
+        CalcularXpTotal(usuario);
+
+        // Actualizar en la base de datos
+        var resultado = await UsuarioRepository.UpdateAsync(usuario.Id, usuario);
+        
+        if (resultado)
+        {
+            mensajeExito = $"Te has desinscrito del curso de {idioma}.";
+            mensajeError = string.Empty;
+            
+            // Recargar usuario
+            usuario = await UsuarioRepository.GetByIdAsync(usuario.Id);
+            
+            // Actualizar lista de idiomas disponibles
+            idiomasDisponibles.Clear();
+            idiomasDisponibles.AddRange(new List<string>
+            {
+                "Inglés", "Español", "Francés", "Alemán", "Italiano", "Portugués", 
+                "Ruso", "Japonés", "Chino", "Coreano", "Árabe", "Holandés"
+            });
+            
+            if (usuario.Cursos != null && usuario.Cursos.Any())
+            {
+                var idiomasInscritos = usuario.Cursos.Select(c => c.Idioma).ToList();
+                idiomasDisponibles.RemoveAll(i => idiomasInscritos.Contains(i));
+            }
+            
+            StateHasChanged();
+        }
+        else
+        {
+            mensajeError = "No se pudo desinscribir del curso. Por favor, intenta nuevamente.";
+        }
+    }
+
+    private void CalcularXpTotal(Usuario usuario)
+    {
+        if (usuario.Cursos != null && usuario.Cursos.Any())
+        {
+            usuario.ProgresoGeneral ??= new ProgresoGeneral();
+            usuario.ProgresoGeneral.XpTotal = usuario.Cursos.Sum(c => c.XpAcumulado);
+        }
+        else
+        {
+            usuario.ProgresoGeneral ??= new ProgresoGeneral();
+            usuario.ProgresoGeneral.XpTotal = 0;
+        }
+    }
+
+    private List<UnidadCurso> GenerarUnidadesIniciales()
+    {
+        var unidades = new List<UnidadCurso>();
+        for (int i = 1; i <= 10; i++)
+        {
+            unidades.Add(new UnidadCurso
+            {
+                NumeroUnidad = i,
+                Nombre = $"Unidad {i}",
+                NivelesTotales = 5,
+                NivelesCompletados = 0,
+                Completada = false
+            });
+        }
+        return unidades;
+    }
+}
+

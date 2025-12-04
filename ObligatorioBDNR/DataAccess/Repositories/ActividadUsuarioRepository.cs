@@ -106,6 +106,18 @@ public class ActividadUsuarioRepository
     }
 
     /// <summary>
+    /// Inserta múltiples actividades de forma eficiente (bulk insert)
+    /// </summary>
+    public async Task InsertManyAsync(IEnumerable<ActividadUsuario> actividades)
+    {
+        var actividadesList = actividades.ToList();
+        if (actividadesList.Any())
+        {
+            await _collection.InsertManyAsync(actividadesList);
+        }
+    }
+
+    /// <summary>
     /// Actualiza una actividad existente
     /// </summary>
     public async Task<bool> UpdateAsync(Guid id, ActividadUsuario actividad)

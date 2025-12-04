@@ -12,6 +12,11 @@ public class MongoContext
     private readonly IMongoDatabase _database;
 
     /// <summary>
+    /// Obtiene la base de datos de MongoDB
+    /// </summary>
+    public IMongoDatabase Database => _database;
+
+    /// <summary>
     /// Constructor que inicializa la conexión a MongoDB
     /// </summary>
     /// <param name="connectionString">Cadena de conexión a MongoDB</param>
@@ -41,4 +46,10 @@ public class MongoContext
     /// </summary>
     public IMongoCollection<LogroDefinicion> Logros
         => _database.GetCollection<LogroDefinicion>("logros_definicion");
+
+    /// <summary>
+    /// Colección de estadísticas de usuarios
+    /// </summary>
+    public IMongoCollection<EstadisticaUsuario> Estadisticas
+        => _database.GetCollection<EstadisticaUsuario>("estadisticas_usuario");
 }

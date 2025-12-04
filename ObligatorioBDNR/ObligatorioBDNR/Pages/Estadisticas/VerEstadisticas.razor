@@ -1,0 +1,253 @@
+@page "/estadisticas"
+@inject AuthService AuthService
+@inject UsuarioRepository UsuarioRepository
+@inject EstadisticaUsuarioRepository EstadisticaRepository
+@inject NavigationManager Navigation
+@using System.Linq
+
+<PageTitle>Estadísticas - Duolingo</PageTitle>
+
+@if (!AuthService.EstaAutenticado())
+{
+    <div class="alert alert-warning">
+        Debes iniciar sesión para ver tus estadísticas. <a href="/login">Iniciar Sesión</a>
+    </div>
+}
+else if (usuario == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <div class="mb-3">
+        <a href="/" class="btn btn-secondary">← Volver al Perfil</a>
+    </div>
+
+    <h1>Estadísticas</h1>
+    
+    @if (EsUsuarioPlus())
+    {
+        <div class="alert alert-success mb-3">
+            <strong>💎 Usuario Plus:</strong> Tienes acceso a estadísticas generales y estadísticas detalladas por día.
+        </div>
+    }
+
+    @* Estadísticas Generales - Visibles para todos los usuarios *@
+    @if (usuario.EstadisticasGenerales != null)
+    {
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4>📊 Estadísticas Generales</h4>
+                        <small class="text-white-50">Disponible para todos los usuarios</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center p-3 border rounded">
+                                    <h5 class="text-primary">@usuario.EstadisticasGenerales.RachaActual</h5>
+                                    <p class="mb-0"><strong>Racha Actual</strong></p>
+                                    <small class="text-muted">días consecutivos</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 border rounded">
+                                    <h5 class="text-success">@usuario.EstadisticasGenerales.RachaMaxima</h5>
+                                    <p class="mb-0"><strong>Racha Máxima</strong></p>
+                                    <small class="text-muted">mejor racha</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 border rounded">
+                                    <h5 class="text-info">@usuario.EstadisticasGenerales.XpSemanaActual</h5>
+                                    <p class="mb-0"><strong>XP Semana Actual</strong></p>
+                                    <small class="text-muted">esta semana</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 border rounded">
+                                    <h5 class="text-warning">@usuario.EstadisticasGenerales.DiasActivosUltimos30</h5>
+                                    <p class="mb-0"><strong>Días Activos</strong></p>
+                                    <small class="text-muted">últimos 30 días</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p><strong>XP Semana Anterior:</strong> @usuario.EstadisticasGenerales.XpSemanaAnterior XP</p>
+                            </div>
+                            <div class="col-md-6">
+                                @if (usuario.EstadisticasGenerales.XpSemanaAnterior > 0)
+                                {
+                                    var diferencia = usuario.EstadisticasGenerales.XpSemanaActual - usuario.EstadisticasGenerales.XpSemanaAnterior;
+                                    var porcentaje = (diferencia * 100.0) / usuario.EstadisticasGenerales.XpSemanaAnterior;
+                                    <p>
+                                        <strong>Comparación Semanal:</strong>
+                                        <span class="badge @(diferencia >= 0 ? "bg-success" : "bg-danger") fs-6">
+                                            @(diferencia >= 0 ? "+" : "")@diferencia XP (@(porcentaje >= 0 ? "+" : "")@porcentaje.ToString("F1")%)
+                                        </span>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @* Estadísticas Detalladas por Día - Solo para usuarios Plus *@
+    @if (EsUsuarioPlus())
+    {
+        <div class="mb-3 mt-4">
+            <h2>💎 Estadísticas Detalladas por Día</h2>
+            <p class="text-muted">Detalle diario de tu actividad de aprendizaje - <span class="badge bg-success">Exclusivo Plus</span></p>
+        </div>
+
+        <div class="card mb-3 border-success">
+            <div class="card-header bg-success text-white">
+                <span class="text-white">💎 Exclusivo Plus</span>
+            </div>
+            <div class="card-body">
+                @if (estadisticas != null && estadisticas.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>XP Total</th>
+                                    <th>Tiempo Estudio</th>
+                                    <th>Lecciones</th>
+                                    <th>Unidad Más Trabajada</th>
+                                    <th>Detalle por Curso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var estadistica in estadisticas)
+                                {
+                                    <tr>
+                                        <td>@estadistica.Fecha.ToString("dd/MM/yyyy")</td>
+                                        <td>@estadistica.XpTotalDia XP</td>
+                                        <td>@estadistica.TiempoEstudioMinutos minutos</td>
+                                        <td>@estadistica.LeccionesCompletadas</td>
+                                        <td>@estadistica.UnidadMasTrabajada</td>
+                                        <td>
+                                            @if (estadistica.DetallePorCurso != null && estadistica.DetallePorCurso.Any())
+                                            {
+                                                <ul class="mb-0">
+                                                    @foreach (var detalle in estadistica.DetallePorCurso)
+                                                    {
+                                                        <li>@detalle.Idioma: @detalle.Xp XP, @detalle.Lecciones lecciones</li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (totalRegistros > pageSize)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span>Página @paginaActual de @totalPaginas</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-secondary" @onclick="PaginaAnterior" disabled="@(paginaActual <= 1)">Anterior</button>
+                                <span class="mx-2">@paginaActual</span>
+                                <button class="btn btn-sm btn-secondary" @onclick="PaginaSiguiente" disabled="@(paginaActual >= totalPaginas)">Siguiente</button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">No hay estadísticas por día disponibles aún.</p>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info mt-4">
+            <h4>💎 Actualiza a Plus para ver estadísticas detalladas por día</h4>
+            <p>Los usuarios con suscripción Plus pueden ver:</p>
+            <ul>
+                <li>XP por día</li>
+                <li>XP por curso</li>
+                <li>Tiempo estudiado por día</li>
+                <li>Unidad más trabajada cada día</li>
+                <li>Progreso detallado por curso</li>
+            </ul>
+            <a href="/perfil/editar" class="btn btn-primary">Actualizar Suscripción</a>
+        </div>
+    }
+}
+
+@code {
+    private Usuario? usuario;
+    private List<EstadisticaUsuario> estadisticas = new();
+    private int paginaActual = 1;
+    private int pageSize = 10;
+    private long totalRegistros = 0;
+    private int totalPaginas => (int)Math.Ceiling((double)totalRegistros / pageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.EstaAutenticado())
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        usuario = await AuthService.GetUsuarioActualAsync();
+        if (usuario == null)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        // Solo cargar estadísticas por día si es usuario Plus
+        if (EsUsuarioPlus())
+        {
+            await CargarEstadisticas();
+        }
+    }
+
+    private async Task CargarEstadisticas()
+    {
+        if (usuario == null) return;
+
+        var resultado = await EstadisticaRepository.GetPagedByUsuarioAsync(usuario.Id, paginaActual, pageSize);
+        estadisticas = resultado.estadisticas;
+        totalRegistros = resultado.total;
+    }
+
+    private async Task PaginaAnterior()
+    {
+        if (paginaActual > 1)
+        {
+            paginaActual--;
+            await CargarEstadisticas();
+        }
+    }
+
+    private async Task PaginaSiguiente()
+    {
+        if (paginaActual < totalPaginas)
+        {
+            paginaActual++;
+            await CargarEstadisticas();
+        }
+    }
+
+    private bool EsUsuarioPlus()
+    {
+        return usuario?.Suscripcion?.Tipo == "Plus";
+    }
+}
+

@@ -264,11 +264,12 @@ else
             };
 
             // Mantener los valores originales de ProgresoGeneral (no se pueden editar)
+            // Calcular XP total basado en los cursos
             usuario.ProgresoGeneral = new ProgresoGeneral
             {
                 IdiomaPrincipal = usuario.ProgresoGeneral?.IdiomaPrincipal ?? "Español",
                 NivelesCompletados = usuario.ProgresoGeneral?.NivelesCompletados ?? 0,
-                XpTotal = usuario.ProgresoGeneral?.XpTotal ?? 0
+                XpTotal = CalcularXpTotal(usuario)
             };
 
             usuario.Suscripcion = new Suscripcion
@@ -309,8 +310,7 @@ else
                 
                 if (usuarioVerificado != null && usuarioVerificado.Email == emailDespues && usuarioPorEmail != null)
                 {
-                    mensajeExito = $"Perfil actualizado correctamente. Email actualizado de '{emailAntes}' a '{emailDespues}'. " +
-                                   $"Verificado en BD: ID={usuarioVerificado.Id}, Email={usuarioVerificado.Email}";
+                    mensajeExito = "Perfil actualizado correctamente";
                     usuario = usuarioVerificado;
                     await CargarUsuario();
                 }
@@ -344,6 +344,15 @@ else
             guardando = false;
             StateHasChanged();
         }
+    }
+
+    private int CalcularXpTotal(Usuario usuario)
+    {
+        if (usuario.Cursos != null && usuario.Cursos.Any())
+        {
+            return usuario.Cursos.Sum(c => c.XpAcumulado);
+        }
+        return 0;
     }
 }
 
