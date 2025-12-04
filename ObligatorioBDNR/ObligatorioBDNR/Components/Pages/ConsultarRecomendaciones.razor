@@ -74,23 +74,8 @@
                         }
                         Consultar
                     </button>
-                    <button class="btn btn-outline-secondary ms-2" @onclick="OnDiagnosticar" disabled="@isLoading">
-                        Diagnóstico
-                    </button>
                 </div>
             </div>
-
-            @if (!string.IsNullOrEmpty(diagnostico))
-            {
-                <div class="card mb-4">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="mb-0">Diagnóstico de Conexión</h5>
-                    </div>
-                    <div class="card-body">
-                        <pre class="mb-0" style="white-space: pre-wrap;">@diagnostico</pre>
-                    </div>
-                </div>
-            }
 
             @if (consultaRealizada && resultados.Any())
             {
@@ -152,42 +137,12 @@
     private bool consultaRealizada = false;
     private string mensaje = string.Empty;
     private bool esExito = false;
-    private string diagnostico = string.Empty;
 
     private void LimpiarResultados()
     {
         resultados.Clear();
         consultaRealizada = false;
         mensaje = string.Empty;
-        diagnostico = string.Empty;
-    }
-
-    private async Task OnDiagnosticar()
-    {
-        if (string.IsNullOrWhiteSpace(usuarioId))
-        {
-            mensaje = "Por favor, ingresa un ID de usuario para diagnosticar";
-            esExito = false;
-            return;
-        }
-
-        isLoading = true;
-        diagnostico = "Ejecutando diagnóstico...";
-        StateHasChanged();
-
-        try
-        {
-            diagnostico = await RecomendacionService.ObtenerDiagnosticoAsync(usuarioId.Trim());
-        }
-        catch (Exception ex)
-        {
-            diagnostico = $"Error en diagnóstico: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
-        }
     }
 
     private async Task OnConsultarRecomendaciones()
@@ -201,7 +156,6 @@
             esExito = false;
             StateHasChanged();
 
-            // Validar parámetros requeridos
             if (string.IsNullOrWhiteSpace(usuarioId))
             {
                 mensaje = "Por favor, ingresa un ID de usuario válido";
@@ -212,7 +166,6 @@
                 return;
             }
 
-            // Verificar primero si los datos están cargados
             mensaje = "Verificando datos...";
             StateHasChanged();
             

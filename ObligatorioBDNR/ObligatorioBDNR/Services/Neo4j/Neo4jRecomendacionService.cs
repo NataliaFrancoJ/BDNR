@@ -18,6 +18,24 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     public async Task CrearUsuarioAsync(Usuario usuario)
     {
         await using var session = _context.GetSession();
+        
+        var checkResult = await session.RunAsync(
+            "MATCH (u:Usuario {idUsuario: $idUsuario}) RETURN u.idUsuario AS id",
+            new { idUsuario = usuario.IdUsuario }
+        );
+        
+        var exists = false;
+        await foreach (var record in checkResult)
+        {
+            exists = true;
+            break;
+        }
+        
+        if (exists)
+        {
+            throw new Exception($"Ya existe un usuario con el ID '{usuario.IdUsuario}'. Por favor, usa un ID diferente.");
+        }
+        
         await session.RunAsync(
             "CREATE (u:Usuario {idUsuario: $idUsuario, username: $username})",
             new { idUsuario = usuario.IdUsuario, username = usuario.Username }
@@ -27,6 +45,24 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     public async Task CrearIdiomaAsync(Idioma idioma)
     {
         await using var session = _context.GetSession();
+        
+        var checkResult = await session.RunAsync(
+            "MATCH (i:Idioma {idIdioma: $idIdioma}) RETURN i.idIdioma AS id",
+            new { idIdioma = idioma.IdIdioma }
+        );
+        
+        var exists = false;
+        await foreach (var record in checkResult)
+        {
+            exists = true;
+            break;
+        }
+        
+        if (exists)
+        {
+            throw new Exception($"Ya existe un idioma con el ID '{idioma.IdIdioma}'. Por favor, usa un ID diferente.");
+        }
+        
         await session.RunAsync(
             "CREATE (i:Idioma {idIdioma: $idIdioma, nombre: $nombre})",
             new { idIdioma = idioma.IdIdioma, nombre = idioma.Nombre }
@@ -36,6 +72,24 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     public async Task CrearUnidadAsync(Unidad unidad)
     {
         await using var session = _context.GetSession();
+        
+        var checkResult = await session.RunAsync(
+            "MATCH (u:Unidad {idUnidad: $idUnidad}) RETURN u.idUnidad AS id",
+            new { idUnidad = unidad.IdUnidad }
+        );
+        
+        var exists = false;
+        await foreach (var record in checkResult)
+        {
+            exists = true;
+            break;
+        }
+        
+        if (exists)
+        {
+            throw new Exception($"Ya existe una unidad con el ID '{unidad.IdUnidad}'. Por favor, usa un ID diferente.");
+        }
+        
         await session.RunAsync(
             "CREATE (u:Unidad {idUnidad: $idUnidad, nombre: $nombre, posicion: $posicion, descripcion: $descripcion, nivel: $nivel})",
             new
@@ -52,6 +106,24 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     public async Task CrearHabilidadAsync(Habilidad habilidad)
     {
         await using var session = _context.GetSession();
+        
+        var checkResult = await session.RunAsync(
+            "MATCH (h:Habilidad {idHabilidad: $idHabilidad}) RETURN h.idHabilidad AS id",
+            new { idHabilidad = habilidad.IdHabilidad }
+        );
+        
+        var exists = false;
+        await foreach (var record in checkResult)
+        {
+            exists = true;
+            break;
+        }
+        
+        if (exists)
+        {
+            throw new Exception($"Ya existe una habilidad con el ID '{habilidad.IdHabilidad}'. Por favor, usa un ID diferente.");
+        }
+        
         await session.RunAsync(
             "CREATE (h:Habilidad {idHabilidad: $idHabilidad, nombre: $nombre, descripcion: $descripcion, categoria: $categoria})",
             new
@@ -67,6 +139,24 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     public async Task CrearEjercicioAsync(Ejercicio ejercicio)
     {
         await using var session = _context.GetSession();
+        
+        var checkResult = await session.RunAsync(
+            "MATCH (e:Ejercicio {idEjercicio: $idEjercicio}) RETURN e.idEjercicio AS id",
+            new { idEjercicio = ejercicio.IdEjercicio }
+        );
+        
+        var exists = false;
+        await foreach (var record in checkResult)
+        {
+            exists = true;
+            break;
+        }
+        
+        if (exists)
+        {
+            throw new Exception($"Ya existe un ejercicio con el ID '{ejercicio.IdEjercicio}'. Por favor, usa un ID diferente.");
+        }
+        
         await session.RunAsync(
             "CREATE (e:Ejercicio {idEjercicio: $idEjercicio, nombre: $nombre, descripcion: $descripcion, categoria: $categoria})",
             new
@@ -202,7 +292,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     {
         await using var session = _context.GetSession();
         
-        // Verificar si la proyección ya existe
         var checkResult = await session.RunAsync("CALL gds.graph.exists('usuarios-ejercicios') YIELD exists RETURN exists");
         var exists = false;
         await foreach (var record in checkResult)
@@ -212,17 +301,15 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
         if (exists)
         {
-            return; // La proyección ya existe
+            return;
         }
 
-        // Eliminar proyección si existe (por si acaso)
         try
         {
             await session.RunAsync("CALL gds.graph.drop('usuarios-ejercicios', false)");
         }
         catch { }
 
-        // Crear proyección para similitud de usuarios basada en ejercicios realizados
         try
         {
             await session.RunAsync(@"
@@ -239,7 +326,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         }
         catch (Exception ex)
         {
-            // Si falla, puede ser que no haya suficientes datos
             throw new Exception($"Error al crear proyección GDS 'usuarios-ejercicios': {ex.Message}");
         }
     }
@@ -248,7 +334,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     {
         await using var session = _context.GetSession();
         
-        // Verificar si la proyección ya existe
         var checkResult = await session.RunAsync("CALL gds.graph.exists('ejercicios-habilidades') YIELD exists RETURN exists");
         var exists = false;
         await foreach (var record in checkResult)
@@ -258,7 +343,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
         if (exists)
         {
-            return; // La proyección ya existe
+            return; 
         }
 
         try
@@ -267,7 +352,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         }
         catch { }
 
-        // Crear proyección para encontrar ejercicios importantes basados en habilidades
         try
         {
             await session.RunAsync(@"
@@ -300,7 +384,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     {
         await using var session = _context.GetSession();
         
-        // Verificar si la proyección ya existe
         try
         {
             var checkResult = await session.RunAsync("CALL gds.graph.exists('usuarios-habilidades') YIELD exists RETURN exists");
@@ -312,26 +395,21 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
 
             if (exists)
             {
-                return; // La proyección ya existe
+                return;
             }
         }
         catch
         {
-            // Si gds.graph.exists no está disponible, continuar con la creación
         }
 
-        // Eliminar proyección si existe (por si acaso)
         try
         {
             await session.RunAsync("CALL gds.graph.drop('usuarios-habilidades', false)");
         }
         catch { }
 
-        // Crear proyección para similitud basada en dificultades (habilidades donde fallan)
-        // Nota: Esta proyección puede no ser necesaria para el Patrón 1, pero la mantenemos por si se necesita en el futuro
         try
         {
-            // Primero intentar con sintaxis estándar
             await session.RunAsync(@"
                 CALL gds.graph.project(
                     'usuarios-habilidades',
@@ -346,9 +424,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         }
         catch (Exception ex)
         {
-            // Si falla, puede ser que no haya suficientes datos o que la sintaxis sea diferente
-            // En este caso, simplemente no creamos la proyección y continuamos
-            // El método de recomendación puede funcionar sin esta proyección específica
             System.Diagnostics.Debug.WriteLine($"Advertencia: No se pudo crear proyección 'usuarios-habilidades': {ex.Message}");
         }
     }
@@ -356,15 +431,12 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
     #endregion
 
     #region Métodos para consultar recomendaciones
-
-    // Patrón 1: Recomendación basada en las dificultades del usuario
     public async Task<List<RecomendacionResultado>> ObtenerRecomendacionesPorDificultadesAsync(string usuarioId)
     {
         var resultados = new List<RecomendacionResultado>();
 
         await using var session = _context.GetSession();
         
-        // Usar el mismo patrón que funciona en el diagnóstico
         var cursor = await session.RunAsync(
             @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma)
               MATCH (u)-[f:FALLA_EN]->(h:Habilidad)
@@ -403,17 +475,14 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         return resultados;
     }
 
-    // Patrón 2: Filtro basado en la similitud de usuarios (usando GDS Node Similarity)
     public async Task<List<RecomendacionResultado>> ObtenerRecomendacionesPorSimilitudUsuariosAsync(string usuarioId)
     {
         var resultados = new List<RecomendacionResultado>();
 
         await using var session = _context.GetSession();
         
-        // Asegurar que la proyección existe
         await CrearProyeccionUsuariosEjerciciosAsync();
 
-        // Paso 1: Calcular similitud de usuarios usando GDS Node Similarity
         var similarityResult = await session.RunAsync(@"
             CALL gds.nodeSimilarity.stream('usuarios-ejercicios', {
                 similarityCutoff: 0.1,
@@ -435,7 +504,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             usuariosSimilares.Add((record["usuarioSimilar"].As<string>(), record["similarity"].As<double>()));
         }
 
-        // Si no hay usuarios similares, usar fallback a relaciones SIMILAR_A manuales
         if (!usuariosSimilares.Any())
         {
             var fallbackResult = await session.RunAsync(
@@ -469,7 +537,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             return resultados;
         }
 
-        // Paso 2: Obtener ejercicios de usuarios similares con score ponderado
         var usuarioIds = usuariosSimilares.Select(u => u.UsuarioId).ToList();
         var similarityMap = usuariosSimilares.ToDictionary(u => u.UsuarioId, u => u.Similarity);
         
@@ -515,40 +582,99 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         return resultados;
     }
 
-    // Patrón 3: Recomendación basada en el contenido y la estructura del curso (usando GDS PageRank)
     public async Task<List<RecomendacionResultado>> ObtenerRecomendacionesPorContenidoCursoAsync(string usuarioId, string? idiomaId = null)
     {
         var resultados = new List<RecomendacionResultado>();
 
         await using var session = _context.GetSession();
         
-        // Asegurar que la proyección existe
-        await CrearProyeccionEjerciciosHabilidadesAsync();
-
-        // Usar PageRank para encontrar ejercicios importantes en la estructura del curso
-        string graphName = "ejercicios-habilidades";
-        
-        // Ejecutar PageRank en la proyección
-        var pageRankResult = await session.RunAsync(@"
-            CALL gds.pageRank.stream($graphName, {
-                maxIterations: 20,
-                dampingFactor: 0.85
-            })
-            YIELD nodeId, score
-            MATCH (e:Ejercicio) WHERE id(e) = nodeId
-            RETURN e.idEjercicio AS ejercicio, score
-            ORDER BY score DESC
-            LIMIT 50",
-            new { graphName }
-        );
-
         var ejerciciosScores = new Dictionary<string, double>();
-        await foreach (var record in pageRankResult)
+        bool usarGDS = false;
+
+        try
         {
-            ejerciciosScores[record["ejercicio"].As<string>()] = record["score"].As<double>();
+            await CrearProyeccionEjerciciosHabilidadesAsync();
+
+            string graphName = "ejercicios-habilidades";
+            
+            var pageRankResult = await session.RunAsync(@"
+                CALL gds.pageRank.stream($graphName, {
+                    maxIterations: 20,
+                    dampingFactor: 0.85
+                })
+                YIELD nodeId, score
+                MATCH (e:Ejercicio) WHERE id(e) = nodeId
+                RETURN e.idEjercicio AS ejercicio, score
+                ORDER BY score DESC
+                LIMIT 50",
+                new { graphName }
+            );
+
+            await foreach (var record in pageRankResult)
+            {
+                ejerciciosScores[record["ejercicio"].As<string>()] = record["score"].As<double>();
+            }
+
+            usarGDS = ejerciciosScores.Any();
+        }
+        catch
+        {
+            usarGDS = false;
         }
 
-        // Combinar con información del usuario y estructura del curso
+        if (!usarGDS)
+        {
+            string queryFallback = idiomaId == null
+                ? @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma)
+                    MATCH (e:Ejercicio)-[:PERTENECE_A]->(un:Unidad)-[:DEL_IDIOMA]->(idI)
+                    MATCH (e)-[:REFUERZA]->(h:Habilidad)-[:DEL_IDIOMA]->(idI)
+                    WHERE NOT (u)-[:REALIZA]->(e)
+                    RETURN DISTINCT e.idEjercicio AS ejercicio,
+                           e.nombre AS nombreEjercicio,
+                           h.nombre AS habilidad,
+                           un.nombre AS unidad,
+                           un.posicion AS posicion,
+                           idI.nombre AS idioma,
+                           1.0 AS score
+                    ORDER BY un.posicion ASC
+                    LIMIT 20"
+                : @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma {idIdioma: $idiomaId})
+                    MATCH (e:Ejercicio)-[:PERTENECE_A]->(un:Unidad)-[:DEL_IDIOMA]->(idI)
+                    MATCH (e)-[:REFUERZA]->(h:Habilidad)-[:DEL_IDIOMA]->(idI)
+                    WHERE NOT (u)-[:REALIZA]->(e)
+                    RETURN DISTINCT e.idEjercicio AS ejercicio,
+                           e.nombre AS nombreEjercicio,
+                           h.nombre AS habilidad,
+                           un.nombre AS unidad,
+                           un.posicion AS posicion,
+                           idI.nombre AS idioma,
+                           1.0 AS score
+                    ORDER BY un.posicion ASC
+                    LIMIT 20";
+
+            object parametersFallback = idiomaId == null
+                ? (object)new { usuarioId }
+                : new { usuarioId, idiomaId };
+
+            var resultFallback = await session.RunAsync(queryFallback, parametersFallback);
+
+            await foreach (var record in resultFallback)
+            {
+                resultados.Add(new RecomendacionResultado
+                {
+                    IdEjercicio = record["ejercicio"].As<string>(),
+                    NombreEjercicio = record["nombreEjercicio"].As<string>() ?? string.Empty,
+                    Habilidad = record["habilidad"].As<string>(),
+                    Unidad = record["unidad"].As<string>(),
+                    Idioma = record["idioma"].As<string>(),
+                    Score = record["score"].As<double>(),
+                    TipoRecomendacion = "Basada en contenido y estructura del curso"
+                });
+            }
+
+            return resultados;
+        }
+
         string query = idiomaId == null
             ? @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma)
                 MATCH (e:Ejercicio)-[:PERTENECE_A]->(un:Unidad)-[:DEL_IDIOMA]->(idI)
@@ -599,7 +725,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             });
         }
 
-        // Ordenar por score de PageRank
         resultados = resultados.OrderByDescending(r => r.Score).ThenBy(r => 
         {
             var posicionStr = r.Unidad?.Split(' ').LastOrDefault() ?? "0";
@@ -609,33 +734,96 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         return resultados;
     }
 
-    // Patrón 4: Recomendación según el idioma estudiado por el usuario (usando GDS)
     public async Task<List<RecomendacionResultado>> ObtenerRecomendacionesPorIdiomaAsync(string usuarioId, string? idiomaId = null)
     {
         var resultados = new List<RecomendacionResultado>();
 
         await using var session = _context.GetSession();
         
-        // Usar GDS para encontrar ejercicios importantes en el contexto del idioma
-        await CrearProyeccionEjerciciosHabilidadesAsync();
-
-        // Usar Betweenness Centrality para encontrar ejercicios centrales en el grafo del idioma
-        var centralityResult = await session.RunAsync(@"
-            CALL gds.betweenness.stream('ejercicios-habilidades', {
-                maxDepth: 3
-            })
-            YIELD nodeId, score
-            MATCH (e:Ejercicio) WHERE id(e) = nodeId
-            RETURN e.idEjercicio AS ejercicio, score
-            ORDER BY score DESC
-            LIMIT 50",
-            new { }
-        );
-
         var ejerciciosScores = new Dictionary<string, double>();
-        await foreach (var record in centralityResult)
+        bool usarGDS = false;
+
+        try
         {
-            ejerciciosScores[record["ejercicio"].As<string>()] = record["score"].As<double>();
+            await CrearProyeccionEjerciciosHabilidadesAsync();
+
+            var centralityResult = await session.RunAsync(@"
+                CALL gds.betweenness.stream('ejercicios-habilidades')
+                YIELD nodeId, score
+                MATCH (e:Ejercicio) WHERE id(e) = nodeId
+                RETURN e.idEjercicio AS ejercicio, score
+                ORDER BY score DESC
+                LIMIT 50",
+                new { }
+            );
+
+            await foreach (var record in centralityResult)
+            {
+                ejerciciosScores[record["ejercicio"].As<string>()] = record["score"].As<double>();
+            }
+
+            usarGDS = ejerciciosScores.Any();
+        }
+        catch
+        {
+            usarGDS = false;
+        }
+
+        if (!usarGDS)
+        {
+            string queryFallback = idiomaId == null
+                ? @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma)
+                    MATCH (un:Unidad)-[:DEL_IDIOMA]->(idI)
+                    MATCH (h:Habilidad)-[:DEL_IDIOMA]->(idI)
+                    MATCH (e:Ejercicio)-[:PERTENECE_A]->(un)
+                    MATCH (e)-[:REFUERZA]->(h)
+                    WHERE NOT (u)-[:REALIZA]->(e)
+                    RETURN DISTINCT e.idEjercicio AS ejercicio,
+                           e.nombre AS nombreEjercicio,
+                           h.nombre AS habilidad,
+                           un.nombre AS unidad,
+                           un.posicion AS posicion,
+                           idI.nombre AS idioma,
+                           1.0 AS score
+                    ORDER BY un.posicion ASC
+                    LIMIT 20"
+                : @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma {idIdioma: $idiomaId})
+                    MATCH (un:Unidad)-[:DEL_IDIOMA]->(idI)
+                    MATCH (h:Habilidad)-[:DEL_IDIOMA]->(idI)
+                    MATCH (e:Ejercicio)-[:PERTENECE_A]->(un)
+                    MATCH (e)-[:REFUERZA]->(h)
+                    WHERE NOT (u)-[:REALIZA]->(e)
+                    RETURN DISTINCT e.idEjercicio AS ejercicio,
+                           e.nombre AS nombreEjercicio,
+                           h.nombre AS habilidad,
+                           un.nombre AS unidad,
+                           un.posicion AS posicion,
+                           idI.nombre AS idioma,
+                           1.0 AS score
+                    ORDER BY un.posicion ASC
+                    LIMIT 20";
+
+            object parametersFallback = idiomaId == null
+                ? (object)new { usuarioId }
+                : new { usuarioId, idiomaId };
+
+            var resultFallback = await session.RunAsync(queryFallback, parametersFallback);
+
+            await foreach (var record in resultFallback)
+            {
+                resultados.Add(new RecomendacionResultado
+                {
+                    IdEjercicio = record["ejercicio"].As<string>(),
+                    NombreEjercicio = record["nombreEjercicio"].As<string>() ?? string.Empty,
+                    Habilidad = record["habilidad"].As<string>(),
+                    Unidad = record["unidad"].As<string>(),
+                    Idioma = record["idioma"].As<string>(),
+                    Score = record["score"].As<double>(),
+                    TipoRecomendacion = "Basada en idioma estudiado"
+                });
+            }
+
+            return resultados;
         }
 
         string query = idiomaId == null
@@ -692,7 +880,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             });
         }
 
-        // Ordenar por score de centralidad
         resultados = resultados.OrderByDescending(r => r.Score).ThenBy(r => 
         {
             var posicionStr = r.Unidad?.Split(' ').LastOrDefault() ?? "0";
@@ -702,19 +889,16 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         return resultados;
     }
 
-    // Patrón 5: Consultas según diversos criterios (combinado usando múltiples algoritmos GDS)
     public async Task<List<RecomendacionResultado>> ObtenerRecomendacionesCombinadasAsync(string usuarioId, string? idiomaId = null)
     {
         var resultados = new List<RecomendacionResultado>();
 
         await using var session = _context.GetSession();
         
-        // Asegurar que las proyecciones existen
         await CrearProyeccionUsuariosEjerciciosAsync();
         await CrearProyeccionEjerciciosHabilidadesAsync();
         await CrearProyeccionUsuariosHabilidadesAsync();
 
-        // 1. Obtener similitud de usuarios usando GDS
         var similarityResult = await session.RunAsync(@"
             CALL gds.nodeSimilarity.stream('usuarios-ejercicios', {
                 similarityCutoff: 0.1,
@@ -736,7 +920,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             usuariosSimilares.Add(record["usuarioSimilar"].As<string>());
         }
 
-        // 2. Obtener PageRank de ejercicios
         var pageRankResult = await session.RunAsync(@"
             CALL gds.pageRank.stream('ejercicios-habilidades', {
                 maxIterations: 20,
@@ -756,7 +939,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             ejerciciosPageRank[record["ejercicio"].As<string>()] = record["score"].As<double>();
         }
 
-        // 3. Combinar todos los criterios en una consulta
         string query = idiomaId == null
             ? @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma)
                 MATCH (e:Ejercicio)-[:PERTENECE_A]->(un:Unidad)-[:DEL_IDIOMA]->(idI)
@@ -772,9 +954,10 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
                        h.nombre AS habilidad,
                        vecesFalladas AS vecesFalladas,
                        un.nombre AS unidad,
+                       un.posicion AS posicion,
                        idI.nombre AS idioma,
                        (vecesFalladas * 2.0 + similarScore * 1.5) AS baseScore
-                ORDER BY baseScore DESC, un.posicion ASC
+                ORDER BY baseScore DESC, posicion ASC
                 LIMIT 50"
             : @"MATCH (u:Usuario {idUsuario: $usuarioId})-[:ESTUDIA]->(idI:Idioma {idIdioma: $idiomaId})
                 MATCH (e:Ejercicio)-[:PERTENECE_A]->(un:Unidad)-[:DEL_IDIOMA]->(idI)
@@ -790,9 +973,10 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
                        h.nombre AS habilidad,
                        vecesFalladas AS vecesFalladas,
                        un.nombre AS unidad,
+                       un.posicion AS posicion,
                        idI.nombre AS idioma,
                        (vecesFalladas * 2.0 + similarScore * 1.5) AS baseScore
-                ORDER BY baseScore DESC, un.posicion ASC
+                ORDER BY baseScore DESC, posicion ASC
                 LIMIT 50";
 
         object parameters = idiomaId == null
@@ -808,8 +992,7 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             var baseScore = record["baseScore"].As<double>();
             var pageRankScore = ejerciciosPageRank.ContainsKey(ejercicioId) ? ejerciciosPageRank[ejercicioId] : 0.0;
             
-            // Combinar scores: baseScore (dificultades + similitud) + PageRank normalizado
-            var combinedScore = baseScore + (pageRankScore * 10.0); // Normalizar PageRank
+            var combinedScore = baseScore + (pageRankScore * 10.0); 
 
             if (!ejerciciosDict.ContainsKey(ejercicioId))
             {
@@ -860,7 +1043,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         }
         catch (Exception ex)
         {
-            // Si hay un error, probablemente no hay datos o hay un problema de conexión
             System.Diagnostics.Debug.WriteLine($"Error al verificar datos: {ex.Message}");
             return false;
         }
@@ -874,7 +1056,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
         {
             await using var session = _context.GetSession();
             
-            // 1. Verificar conexión y contar nodos
             var conteo = await session.ExecuteReadAsync(async tx =>
             {
                 var cursor = await tx.RunAsync(@"
@@ -893,7 +1074,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             diagnostico.AppendLine($"  - Ejercicios: {conteo["ejercicios"].As<int>()}");
             diagnostico.AppendLine($"  - Habilidades: {conteo["habilidades"].As<int>()}");
 
-            // 2. Verificar si existe el usuario
             var usuarioExiste = await session.ExecuteReadAsync(async tx =>
             {
                 var cursor = await tx.RunAsync(
@@ -910,7 +1090,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             }
             diagnostico.AppendLine($"✓ Usuario '{usuarioId}' existe: {usuarioExiste[0]["username"].As<string>()}");
 
-            // 3. Verificar relaciones del usuario
             var relaciones = await session.ExecuteReadAsync(async tx =>
             {
                 var cursor = await tx.RunAsync(@"
@@ -930,7 +1109,6 @@ public class Neo4jRecomendacionService : INeo4jRecomendacionService
             diagnostico.AppendLine($"  - Idiomas que estudia: {string.Join(", ", idiomasUsuario.Where(x => x != null))}");
             diagnostico.AppendLine($"  - Habilidades donde falla: {string.Join(", ", habilidadesUsuario.Where(x => x != null))}");
 
-            // 4. Ejecutar la query de recomendaciones y ver cuántos resultados hay
             var recomendaciones = await session.ExecuteReadAsync(async tx =>
             {
                 var cursor = await tx.RunAsync(@"
